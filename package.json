@@ -1,0 +1,36 @@
+{
+  "name": "react19",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "rsbuild dev --open",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@arco-design/mobile-react": "^2.34.0",
+    "ahooks": "^3.8.4",
+    "axios": "^1.7.9",
+    "clsx": "^2.1.1",
+    "lodash-es": "^4.17.21",
+    "mobx": "^6.13.5",
+    "mobx-react": "^9.1.1",
+    "qs": "^6.13.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.0.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@babel/plugin-transform-class-properties": "^7.25.9",
+    "@rsbuild/core": "^1.1.8",
+    "@rsbuild/plugin-babel": "^1.0.3",
+    "@rsbuild/plugin-react": "^1.0.7",
+    "@rsbuild/plugin-sass": "^1.1.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "mockjs": "^1.1.0",
+    "rspack-plugin-mock": "^0.5.0",
+    "typescript": "^5.7.2"
+  }
+}

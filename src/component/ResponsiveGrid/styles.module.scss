@@ -1,0 +1,34 @@
+@use 'sass:map';
+@use 'sass:math';
+@use '../../styles/variables' as vars;
+
+.grid {
+  display: grid;
+  width: 100%;
+
+  @mixin create-columns {
+    @for $i from 1 through 12 {
+      &.cols-xs-#{$i} {
+        grid-template-columns: repeat($i, minmax(0, 1fr));
+      }
+    }
+  }
+
+  @include create-columns;
+
+  @media (width >= 576px) {
+    @include create-columns;
+  }
+
+  @media (width >= 768px) {
+    @include create-columns;
+  }
+
+  @media (width >= 992px) {
+    @include create-columns;
+  }
+
+  @media (width >= 1200px) {
+    @include create-columns;
+  }
+} 

@@ -1,0 +1,69 @@
+@use 'sass:map';
+@use 'sass:color';
+@use '../../styles/variables' as vars;
+
+.card {
+  --card-padding-x: 24px;
+  --card-padding-y: 16px;
+  --card-border-color: #{color.change(#000, $alpha: 0.1)};
+  
+  background: #fff;
+  border-radius: map.get(vars.$border-radius, 'md');
+  box-sizing: border-box;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &.bordered {
+    border: 1px solid var(--card-border-color);
+  }
+
+  &.hoverable {
+    cursor: pointer;
+    
+    &:hover {
+      box-shadow: 0 4px 12px #{color.change(#000, $alpha: 0.1)};
+      transform: translateY(-2px);
+    }
+  }
+
+  &.free {
+    --card-padding-x: 0;
+    --card-padding-y: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .cover {
+    width: 100%;
+    overflow: hidden;
+    border-radius: map.get(vars.$border-radius, 'md') map.get(vars.$border-radius, 'md') 0 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--card-padding-y) var(--card-padding-x);
+    border-bottom: 1px solid var(--card-border-color);
+
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #{color.change(#000, $alpha: 0.85)};
+    }
+
+    .extra {
+      color: #{color.change(#000, $alpha: 0.45)};
+    }
+  }
+
+  .body {
+    padding: var(--card-padding-x);
+  }
+}
