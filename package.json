@@ -7,6 +7,7 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview"
   },
+  "type": "module",
   "dependencies": {
     "@arco-design/mobile-react": "^2.34.0",
     "ahooks": "^3.8.4",
@@ -23,12 +24,16 @@
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@babel/plugin-transform-class-properties": "^7.25.9",
-    "@rsbuild/core": "^1.1.8",
+    "@rsbuild/core": "^1.1.9",
     "@rsbuild/plugin-babel": "^1.0.3",
-    "@rsbuild/plugin-react": "^1.0.7",
+    "@rsbuild/plugin-react": "^1.1.0",
     "@rsbuild/plugin-sass": "^1.1.2",
+    "@types/mockjs": "^1.0.10",
+    "@types/node": "^22.10.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "babel-plugin-react-compiler": "19.0.0-beta-37ed2a7-20241206",
+    "mime-types": "^2.1.35",
     "mockjs": "^1.1.0",
     "rspack-plugin-mock": "^0.5.0",
     "typescript": "^5.7.2"

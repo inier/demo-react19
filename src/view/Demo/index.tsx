@@ -4,6 +4,7 @@ import { ResponsiveGrid, Card } from '@/component';
 import DemoRequest from './Request';
 import DemoMobx from './Mobx';
 import DemoUI from './UI';
+import './Mock';
 
 const { Cell } = ResponsiveGrid;
 
@@ -19,6 +20,10 @@ const list = [
   {
     title: 'mobx状态示例',
     content: <DemoMobx />,
+  },
+  {
+    title: 'mock示例',
+    content: <div id="mockDemo" />,
   },
 ];
 

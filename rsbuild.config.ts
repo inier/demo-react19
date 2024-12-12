@@ -6,12 +6,12 @@ import { pluginReact } from '@rsbuild/plugin-react';
 // https://rsbuild.dev/zh/plugins/list/plugin-sass
 import { pluginSass } from '@rsbuild/plugin-sass';
 // https://rsbuild.dev/zh/plugins/list/plugin-babel
-// import { pluginBabel } from '@rsbuild/plugin-babel';
+import { pluginBabel } from '@rsbuild/plugin-babel';
 // https://www.npmjs.com/package/rspack-plugin-mock
 import { pluginMockServer } from 'rspack-plugin-mock/rsbuild';
 
 // 开发代理
-import devProxy from './proxy.config.ts';
+import { devProxy } from './proxy.config.ts';
 
 // 基础配置
 const PUBLIC_URL = '/app';
@@ -91,21 +91,26 @@ export default defineConfig({
   plugins: [
     pluginReact(),
     // babel
-    // pluginBabel({
-    //   babelLoaderOptions: (config, { addPlugins }) => {
-    //     // addPlugins([]);
-    //     plugins: [
-    //       ['@babel/plugin-proposal-decorators', {
-    //         version: 'legacy',
-    //       }],
-    //       ['@babel/plugin-transform-class-properties'],
-    //     ]
-    //   },
-    // }),
+    pluginBabel({
+      include: /\.(?:jsx|tsx)$/,
+      babelLoaderOptions: (config, { addPlugins }) => {
+        // addPlugins([]);
+        plugins: [
+          ['@babel/plugin-proposal-decorators', {
+            version: 'legacy',
+          }],
+          ['@babel/plugin-transform-class-properties'],
+          ['babel-plugin-react-compiler'],
+        ]
+      },
+    }),
     pluginSass(),
     // mock dev server
-    pluginMockServer(/* pluginOptions */{
-      log: "debug"
+    pluginMockServer({
+      prefix: '/api-mock/',
+      wsPrefix: '/socket.io',
+      log: "info",
+      reload: true,
     }),
   ],
   performance: performanceConfig(), // ## Rsbuild 打包工具
