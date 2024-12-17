@@ -3,8 +3,8 @@
 @use '../../styles/variables' as vars;
 
 .card {
-  --card-padding-x: 24px;
-  --card-padding-y: 16px;
+  --card-padding-x: 10px;
+  --card-padding-y: 8px;
   --card-border-color: #{color.change(#000, $alpha: 0.1)};
   
   background: #fff;

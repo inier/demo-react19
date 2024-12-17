@@ -5,6 +5,8 @@ import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 // https://rsbuild.dev/zh/plugins/list/plugin-sass
 import { pluginSass } from '@rsbuild/plugin-sass';
+// https://rsbuild.dev/zh/plugins/list/plugin-less
+import { pluginLess } from '@rsbuild/plugin-less';
 // https://rsbuild.dev/zh/plugins/list/plugin-babel
 import { pluginBabel } from '@rsbuild/plugin-babel';
 // https://www.npmjs.com/package/rspack-plugin-mock
@@ -84,7 +86,7 @@ export default defineConfig({
       {
         libraryName: '@arco-design/mobile-react',
         libraryDirectory: 'esm',
-        style: (path) => `${path}/style`,
+        style: true,
       },
     ],
   },
@@ -96,15 +98,16 @@ export default defineConfig({
       babelLoaderOptions: (config, { addPlugins }) => {
         // addPlugins([]);
         plugins: [
-          ['@babel/plugin-proposal-decorators', {
-            version: 'legacy',
-          }],
-          ['@babel/plugin-transform-class-properties'],
+          // ['@babel/plugin-proposal-decorators', {
+          //   version: 'legacy',
+          // }],
+          // ['@babel/plugin-transform-class-properties'],
           ['babel-plugin-react-compiler'],
         ]
       },
     }),
     pluginSass(),
+    pluginLess(),
     // mock dev server
     pluginMockServer({
       prefix: '/api-mock/',
