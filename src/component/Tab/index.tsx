@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { Tabs } from '@arco-design/mobile-react';
 import styles from './styles.module.scss';
 
 interface TabProps {
     tabs: [],
     children?: React.ReactNode;
-    defaultActiveKey?: string;
+    defaultActiveTab?: number;
     onChange?: (key: { title: string, }, index: number) => void;
     className?: string;
     style?: React.CSSProperties;
@@ -28,24 +28,21 @@ const Tab: FC<TabProps> & { TabPane: FC<TabPaneProps> } = ({
     children,
     ...resProps
 }) => {
-    const [index, setIndex] = useState(0);
     return (
         <Tabs
             tabs={tabs}
             type="line-divide"
-            defaultActiveTab={index}
+            defaultActiveTab={0}
             useCaterpillar={true}
             tabBarHasDivider={false}
             duration={400}
             transitionDuration={400}
             onAfterChange={(tab, index) => {
                 console.log('[tabs]', tab, index);
-                setIndex(index);
-                onChange && onChange(tab, index);
             }}
             {...resProps}
         >
-            {tabs[index]?.content}
+            {children}
         </Tabs>
     );
 }

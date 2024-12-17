@@ -12,7 +12,7 @@ import UIStore from './UIStore';
 import UserStore from './UserStore';
 // == 业务域Stores整合
 // ...
-
+import TestStore from './TestStore';
 // == 页面UIStore整合
 // ...
 
@@ -20,11 +20,13 @@ class RootStore {
   commonRequestData: any;
   UIStore: UIStore;
   userStore: UserStore;
+  testStore: TestStore;
 
   constructor() {
     this.UIStore = new UIStore(this);
     this.userStore = new UserStore(this);
     // 实例化其他Store
+    this.testStore = new TestStore(this);
     // ...
   }
 
@@ -198,6 +200,7 @@ export {
   StoresContext,
   UIStore,
   UserStore,
+  TestStore,
 };
 
 export default stores;
