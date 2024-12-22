@@ -73,6 +73,7 @@
     },
     "husky": {
         "hooks": {
+            "pre-commit": "echo 'Pre-commit checks......' && lint-staged",
             "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
     }
