@@ -21,7 +21,7 @@ const Button: React.FC<ButtonProps> = ({
     loading = false,
     onClick,
     style,
-    className
+    className,
 }) => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (loading || disabled) {
@@ -36,16 +36,13 @@ const Button: React.FC<ButtonProps> = ({
         styles[`btn-${size}`],
         disabled ? styles['btn-disabled'] : '',
         loading ? styles['btn-loading'] : '',
-        className
-    ].filter(Boolean).join(' ');
+        className,
+    ]
+        .filter(Boolean)
+        .join(' ');
 
     return (
-        <button
-            className={classes}
-            onClick={handleClick}
-            disabled={disabled || loading}
-            style={style}
-        >
+        <button className={classes} onClick={handleClick} disabled={disabled || loading} style={style}>
             {loading && <span className={styles['btn-loading-icon']} />}
             {children}
         </button>

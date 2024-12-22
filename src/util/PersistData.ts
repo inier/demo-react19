@@ -1,8 +1,7 @@
-/* eslint-disable no-param-reassign */
 /**
  * 用于将需要的数据保存到本地存储，如localStorage等
  */
-import { autorun } from "mobx";
+import { autorun } from 'mobx';
 
 /**
  * 检测 storage 是否同时受支持和可用的函数
@@ -10,30 +9,30 @@ import { autorun } from "mobx";
  * @returns {boolean}
  */
 function storageAvailable(type) {
-  let storage;
-  try {
-    storage = window[type];
-    const x = "__storage_test__";
-    storage.setItem(x, x);
-    storage.removeItem(x);
-    return true;
-  } catch (e) {
-    return (
-      e instanceof DOMException &&
-      // everything except Firefox
-      (e.code === 22 ||
-        // Firefox
-        e.code === 1014 ||
-        // test name field too, because code might not be present
-        // everything except Firefox
-        e.name === "QuotaExceededError" ||
-        // Firefox
-        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
-      // acknowledge QuotaExceededError only if there's something already stored
-      storage &&
-      storage.length !== 0
-    );
-  }
+    let storage;
+    try {
+        storage = window[type];
+        const x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    } catch (e) {
+        return (
+            e instanceof DOMException &&
+            // everything except Firefox
+            (e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage &&
+            storage.length !== 0
+        );
+    }
 }
 
 /**
@@ -44,55 +43,41 @@ function storageAvailable(type) {
  * @param {boolean} inSessionStorage 是否存放到sessionStorage
  * @param {boolean} global 是否用于全局，true则存入storage时不携带store名
  */
-function persistItem(
-  currStore,
-  name,
-  inSessionStorage = false,
-  global = false
-) {
-  const storage = inSessionStorage
-    ? window.sessionStorage
-    : window.localStorage;
-  // 避免名称冲突
-  const keyName = global ? `${name}` : `${currStore.constructor.name}_${name}`;
-  const persistedData = storage.getItem(keyName);
+function persistItem(currStore, name, inSessionStorage = false, global = false) {
+    const storage = inSessionStorage ? window.sessionStorage : window.localStorage;
+    // 避免名称冲突
+    const keyName = global ? `${name}` : `${currStore.constructor.name}_${name}`;
+    const persistedData = storage.getItem(keyName);
 
-  // 如果本地已经存在keyName，将数据初始化到store对应的变量上
-  if (persistedData !== null) {
-    try {
-      // 如果为undefined
-      if (typeof persistedData === "undefined") {
-        currStore[name] = undefined;
-      } else {
-        // 如果能转换为对象或，则会自动转换为对象
-        const tData = JSON.parse(persistedData);
+    // 如果本地已经存在keyName，将数据初始化到store对应的变量上
+    if (persistedData !== null) {
+        try {
+            // 如果为undefined
+            if (typeof persistedData === 'undefined') {
+                currStore[name] = undefined;
+            } else {
+                // 如果能转换为对象或，则会自动转换为对象
+                const tData = JSON.parse(persistedData);
 
-        if (["object", "boolean"].includes(typeof tData)) {
-          currStore[name] = tData;
-        } else {
-          currStore[name] = persistedData;
+                if (['object', 'boolean'].includes(typeof tData)) {
+                    currStore[name] = tData;
+                } else {
+                    currStore[name] = persistedData;
+                }
+            }
+        } catch (error) {
+            currStore[name] = persistedData;
         }
-      }
-    } catch (error) {
-      currStore[name] = persistedData;
     }
-  }
 
-  autorun(() => {
-    const data = currStore[name];
-    if (
-      typeof data !== "undefined" &&
-      typeof data !== "function" &&
-      data !== null
-    ) {
-      storage.setItem(
-        keyName,
-        typeof data !== "string" ? JSON.stringify(data) : data
-      );
-    } else {
-      storage.removeItem(keyName);
-    }
-  });
+    autorun(() => {
+        const data = currStore[name];
+        if (typeof data !== 'undefined' && typeof data !== 'function' && data !== null) {
+            storage.setItem(keyName, typeof data !== 'string' ? JSON.stringify(data) : data);
+        } else {
+            storage.removeItem(keyName);
+        }
+    });
 }
 
 /**
@@ -102,26 +87,16 @@ function persistItem(
  * @param {boolean} inSessionStorage 是否持久化到sessionStorage
  * @param {boolean} global 是否用于全局，true则存入storage时不携带store名
  */
-export function persistParam(
-  currStore,
-  keyNames,
-  inSessionStorage = false,
-  global = false
-) {
-  if (
-    !storageAvailable("localStorage") ||
-    !storageAvailable("sessionStorage")
-  ) {
-    throw Error("本应用暂不支持隐私/无痕浏览模式，请切换到正常模式使用。");
-  }
-  if (!keyNames) {
-    return;
-  }
-  if (typeof keyNames === "string") {
-    persistItem(currStore, keyNames, inSessionStorage, global);
-  } else {
-    keyNames.forEach((keyName) =>
-      persistItem(currStore, keyName, inSessionStorage, global)
-    );
-  }
+export function persistParam(currStore, keyNames, inSessionStorage = false, global = false) {
+    if (!storageAvailable('localStorage') || !storageAvailable('sessionStorage')) {
+        throw Error('本应用暂不支持隐私/无痕浏览模式，请切换到正常模式使用。');
+    }
+    if (!keyNames) {
+        return;
+    }
+    if (typeof keyNames === 'string') {
+        persistItem(currStore, keyNames, inSessionStorage, global);
+    } else {
+        keyNames.forEach((keyName) => persistItem(currStore, keyName, inSessionStorage, global));
+    }
 }

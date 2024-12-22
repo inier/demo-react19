@@ -7,7 +7,7 @@ class TestStore {
     rootStore: any;
 
     // @observable
-    token = "";
+    token = '';
 
     constructor(rootStore) {
         makeAutoObservable(this, { rootStore: false }, { autoBind: true });

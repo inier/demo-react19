@@ -2,11 +2,16 @@ import React, { FC } from 'react';
 import { Tabs } from '@arco-design/mobile-react';
 import styles from './styles.module.scss';
 
+interface TabItemProps {
+    title: string;
+    content: React.ReactNode;
+}
+
 interface TabProps {
-    tabs: [],
+    tabs: Array<TabItemProps>;
     children?: React.ReactNode;
     defaultActiveTab?: number;
-    onChange?: (key: { title: string, }, index: number) => void;
+    onChange?: (key: { title: string }, index: number) => void;
     className?: string;
     style?: React.CSSProperties;
 }
@@ -22,12 +27,7 @@ const TabPane: FC<TabPaneProps> = ({ children, tabKey }) => (
     </div>
 );
 
-const Tab: FC<TabProps> & { TabPane: FC<TabPaneProps> } = ({
-    tabs = [],
-    onChange,
-    children,
-    ...resProps
-}) => {
+const Tab: FC<TabProps> & { TabPane: FC<TabPaneProps> } = ({ tabs = [], onChange, children, ...resProps }) => {
     return (
         <Tabs
             tabs={tabs}
@@ -45,11 +45,8 @@ const Tab: FC<TabProps> & { TabPane: FC<TabPaneProps> } = ({
             {children}
         </Tabs>
     );
-}
-
-
-
+};
 
 Tab.TabPane = TabPane;
 
-export default Tab; 
+export default Tab;

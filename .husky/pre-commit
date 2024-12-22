@@ -1,0 +1,1 @@
+echo 'Pre-commit checks......' && npx lint-staged

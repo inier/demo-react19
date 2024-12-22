@@ -1,26 +1,25 @@
-import { defineMock } from 'rspack-plugin-mock/helper'
+import { defineMock } from 'rspack-plugin-mock/helper';
 
 const authorMap: Record<string, any> = {
-  10001: { id: '10001', name: 'Mark', age: 20 },
-  10002: { id: '10001', name: 'John', age: 21 },
-}
+    10001: { id: '10001', name: 'Mark', age: 20 },
+    10002: { id: '10001', name: 'John', age: 21 },
+};
 
 export default defineMock({
-  url: '/api/author/:id',
-  body(request) {
-    const id = request.params.id as string
-    if (id && authorMap[id]) {
-      return {
-        code: 200,
-        message: 'success',
-        result: authorMap[id],
-      }
-    }
-    else {
-      return {
-        code: 400,
-        message: 'author not found',
-      }
-    }
-  },
-})
+    url: '/api/author/:id',
+    body(request) {
+        const id = request.params.id as string;
+        if (id && authorMap[id]) {
+            return {
+                code: 200,
+                message: 'success',
+                result: authorMap[id],
+            };
+        } else {
+            return {
+                code: 400,
+                message: 'author not found',
+            };
+        }
+    },
+});

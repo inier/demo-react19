@@ -6,16 +6,16 @@
  * @returns 过滤后的字符串
  */
 export function emoji2Str(str) {
-  return unescape(escape(str).replace(/%uD.{3}/g, ''));
+    return unescape(escape(str).replace(/%uD.{3}/g, ''));
 }
 
 // url中特殊字符编码
 export function encodeStr(str) {
-  return str;
+    return str;
 }
 // url中特殊字符解码
 export function decodeStr(str) {
-  return str;
+    return str;
 }
 
 /**
@@ -24,14 +24,14 @@ export function decodeStr(str) {
  * @returns 转以后的字符串
  */
 export function escapeHTML(str) {
-  if (str.length === 0) return '';
-  return `${str}`
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/ /g, '&nbsp;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
+    if (str.length === 0) return '';
+    return `${str}`
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/ /g, '&nbsp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;');
 }
 
 /**
@@ -40,14 +40,14 @@ export function escapeHTML(str) {
  * @returns 转以后的字符串
  */
 export function unescapeHTML(str) {
-  if (str.length === 0) return '';
-  return `${str}`
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"');
+    if (str.length === 0) return '';
+    return `${str}`
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&#39;/g, "'")
+        .replace(/&quot;/g, '"');
 }
 
 /**
@@ -55,9 +55,9 @@ export function unescapeHTML(str) {
  * @param word
  */
 export const getFirstCapitalizedLetter = (word) => {
-  if (word) {
-    return word.slice(0, 1);
-    // return pinyin(word, { style: pinyin.STYLE_NORMAL, heteronym: false })?.[0][0].slice(0, 1).toLocaleUpperCase();
-  }
-  return null;
+    if (word) {
+        return word.slice(0, 1);
+        // return pinyin(word, { style: pinyin.STYLE_NORMAL, heteronym: false })?.[0][0].slice(0, 1).toLocaleUpperCase();
+    }
+    return null;
 };

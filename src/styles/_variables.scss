@@ -4,31 +4,31 @@
 
 // Size variables
 $sizes: (
-  'xs': 24px,
-  'sm': 32px,
-  'md': 40px,
-  'lg': 48px,
-  'xl': 56px
+    'xs': 24px,
+    'sm': 32px,
+    'md': 40px,
+    'lg': 48px,
+    'xl': 56px,
 );
 
 // Border radius
 $border-radius: (
-  'sm': 4px,
-  'md': 8px,
-  'lg': 16px,
-  'round': 50%
+    'sm': 4px,
+    'md': 8px,
+    'lg': 16px,
+    'round': 50%,
 );
 
 // Colors
 $colors: (
-  'primary': #1890ff,
-  'secondary': #666,
-  'disabled': #d9d9d9
+    'primary': #1890ff,
+    'secondary': #666,
+    'disabled': #d9d9d9,
 );
 
 // 导出变量供其他文件使用
 :export {
-  @each $name, $value in $colors {
-    #{$name}: $value;
-  }
-} 
+    @each $name, $value in $colors {
+        #{$name}: $value;
+    }
+}

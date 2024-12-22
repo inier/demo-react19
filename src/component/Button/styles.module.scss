@@ -2,163 +2,163 @@
 @import '../../styles/variables.scss';
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 400;
-  white-space: nowrap;
-  text-align: center;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s;
-  user-select: none;
-  touch-action: manipulation;
-  line-height: 1.5715;
-  border-radius: map.get($border-radius, 'sm');
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    user-select: none;
+    touch-action: manipulation;
+    line-height: 1.5715;
+    border-radius: map.get($border-radius, 'sm');
 
-  &:focus {
-    outline: none;
-  }
-
-  // Size variants
-  &-xs {
-    height: map.get($sizes, 'xs');
-    padding: 0 8px;
-  }
-
-  &-sm {
-    height: map.get($sizes, 'sm');
-    padding: 0 12px;
-  }
-
-  &-md {
-    height: map.get($sizes, 'md');
-    padding: 0 16px;
-  }
-
-  &-lg {
-    height: map.get($sizes, 'lg');
-    padding: 0 20px;
-  }
-
-  &-xl {
-    height: map.get($sizes, 'xl');
-    padding: 0 24px;
-  }
-
-  // Type variants
-  &-default {
-    background: #fff;
-    border-color: map.get($colors, 'disabled');
-    color: rgba(0, 0, 0, 0.85);
-
-    &:hover {
-      color: map.get($colors, 'primary');
-      border-color: map.get($colors, 'primary');
+    &:focus {
+        outline: none;
     }
 
-    &:active {
-      color: map.get($colors, 'secondary');
-      border-color: map.get($colors, 'secondary');
-    }
-  }
-
-  &-primary {
-    color: #fff;
-    background: map.get($colors, 'primary');
-    border-color: map.get($colors, 'primary');
-
-    &:hover {
-      background: map.get($colors, 'primary');
-      border-color: map.get($colors, 'primary');
+    // Size variants
+    &-xs {
+        height: map.get($sizes, 'xs');
+        padding: 0 8px;
     }
 
-    &:active {
-      background: map.get($colors, 'secondary');
-      border-color: map.get($colors, 'secondary');
-    }
-  }
-
-  &-dashed {
-    color: rgba(0, 0, 0, 0.85);
-    background: #fff;
-    border-style: dashed;
-    border-color: map.get($colors, 'disabled');
-
-    &:hover {
-      color: map.get($colors, 'primary');
-      border-color: map.get($colors, 'primary');
+    &-sm {
+        height: map.get($sizes, 'sm');
+        padding: 0 12px;
     }
 
-    &:active {
-      color: map.get($colors, 'secondary');
-      border-color: map.get($colors, 'secondary');
-    }
-  }
-
-  &-text {
-    border-color: transparent;
-    color: rgba(0, 0, 0, 0.85);
-    background: transparent;
-    padding-left: 0;
-    padding-right: 0;
-
-    &:hover {
-      color: rgba(0, 0, 0, 0.85);
-      background: rgba(0, 0, 0, 0.018);
-    }
-  }
-
-  &-link {
-    color: map.get($colors, 'primary');
-    background: transparent;
-    border-color: transparent;
-    padding-left: 0;
-    padding-right: 0;
-
-    &:hover {
-      color: map.get($colors, 'primary');
+    &-md {
+        height: map.get($sizes, 'md');
+        padding: 0 16px;
     }
 
-    &:active {
-      color: map.get($colors, 'secondary');
+    &-lg {
+        height: map.get($sizes, 'lg');
+        padding: 0 20px;
     }
-  }
 
-  // States
-  &-disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
-
-    &:hover {
-      color: inherit;
-      border-color: inherit;
-      background: inherit;
+    &-xl {
+        height: map.get($sizes, 'xl');
+        padding: 0 24px;
     }
-  }
 
-  &-loading {
-    position: relative;
-    pointer-events: none;
+    // Type variants
+    &-default {
+        background: #fff;
+        border-color: map.get($colors, 'disabled');
+        color: rgba(0, 0, 0, 0.85);
 
-    .btn-loading-icon {
-      margin-right: 8px;
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #fff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: btn-spin 1s infinite linear;
+        &:hover {
+            color: map.get($colors, 'primary');
+            border-color: map.get($colors, 'primary');
+        }
+
+        &:active {
+            color: map.get($colors, 'secondary');
+            border-color: map.get($colors, 'secondary');
+        }
     }
-  }
+
+    &-primary {
+        color: #fff;
+        background: map.get($colors, 'primary');
+        border-color: map.get($colors, 'primary');
+
+        &:hover {
+            background: map.get($colors, 'primary');
+            border-color: map.get($colors, 'primary');
+        }
+
+        &:active {
+            background: map.get($colors, 'secondary');
+            border-color: map.get($colors, 'secondary');
+        }
+    }
+
+    &-dashed {
+        color: rgba(0, 0, 0, 0.85);
+        background: #fff;
+        border-style: dashed;
+        border-color: map.get($colors, 'disabled');
+
+        &:hover {
+            color: map.get($colors, 'primary');
+            border-color: map.get($colors, 'primary');
+        }
+
+        &:active {
+            color: map.get($colors, 'secondary');
+            border-color: map.get($colors, 'secondary');
+        }
+    }
+
+    &-text {
+        border-color: transparent;
+        color: rgba(0, 0, 0, 0.85);
+        background: transparent;
+        padding-left: 0;
+        padding-right: 0;
+
+        &:hover {
+            color: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.018);
+        }
+    }
+
+    &-link {
+        color: map.get($colors, 'primary');
+        background: transparent;
+        border-color: transparent;
+        padding-left: 0;
+        padding-right: 0;
+
+        &:hover {
+            color: map.get($colors, 'primary');
+        }
+
+        &:active {
+            color: map.get($colors, 'secondary');
+        }
+    }
+
+    // States
+    &-disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+
+        &:hover {
+            color: inherit;
+            border-color: inherit;
+            background: inherit;
+        }
+    }
+
+    &-loading {
+        position: relative;
+        pointer-events: none;
+
+        .btn-loading-icon {
+            margin-right: 8px;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: btn-spin 1s infinite linear;
+        }
+    }
 }
 
 @keyframes btn-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

@@ -1,6 +1,6 @@
-import { lazy as reactLazy, Suspense } from "react";
+import { lazy as reactLazy, Suspense } from 'react';
 
-import { loadSpinner } from "./LoadSpinner";
+import { loadSpinner } from './LoadSpinner';
 
 /**
  * 组件导入函数,支持自定义加载动画
@@ -10,16 +10,16 @@ import { loadSpinner } from "./LoadSpinner";
  * @returns {Component}
  */
 export const lazy = (func, options) => {
-  const { spinner, ...restOptions } = options;
-  const LazyComponent = reactLazy(func);
+    const { spinner, ...restOptions } = options;
+    const LazyComponent = reactLazy(func);
 
-  return function LazyComponentFunc(props) {
-    return (
-      <Suspense fallback={loadSpinner(spinner, restOptions)}>
-        <LazyComponent {...props} />
-      </Suspense>
-    );
-  };
+    return function LazyComponentFunc(props) {
+        return (
+            <Suspense fallback={loadSpinner(spinner, restOptions)}>
+                <LazyComponent {...props} />
+            </Suspense>
+        );
+    };
 };
 
 /**
@@ -29,14 +29,14 @@ export const lazy = (func, options) => {
  * @returns {Component}
  */
 export const lazyX = (func, options) => {
-  const { spinner, ...restOptions } = options;
-  const LazyXComponent = reactLazy(func);
+    const { spinner, ...restOptions } = options;
+    const LazyXComponent = reactLazy(func);
 
-  return function LazyXComponentFunc(props) {
-    return (
-      <Suspense fallback={loadSpinner(spinner, restOptions)}>
-        <LazyXComponent {...props} />
-      </Suspense>
-    );
-  };
+    return function LazyXComponentFunc(props) {
+        return (
+            <Suspense fallback={loadSpinner(spinner, restOptions)}>
+                <LazyXComponent {...props} />
+            </Suspense>
+        );
+    };
 };

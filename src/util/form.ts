@@ -7,18 +7,18 @@ import { cloneDeep } from 'lodash-es';
  * @returns {array} 组装后的值
  */
 export function assembleFormConfig(src: any[] = [], ext: any[] = []): any[] {
-  if (ext.length === 0) {
-    return src;
-  }
-  const tData = cloneDeep(src);
-  ext.forEach((item: any) => {
-    const tId = item.key;
-    const tIndex = tData.findIndex((it) => {
-      return it.key === tId;
+    if (ext.length === 0) {
+        return src;
+    }
+    const tData = cloneDeep(src);
+    ext.forEach((item: any) => {
+        const tId = item.key;
+        const tIndex = tData.findIndex((it) => {
+            return it.key === tId;
+        });
+        const { key, ...rest } = item;
+        Object.assign(tData[tIndex], rest);
     });
-    const { key, ...rest } = item;
-    Object.assign(tData[tIndex], rest);
-  });
 
-  return tData;
+    return tData;
 }
