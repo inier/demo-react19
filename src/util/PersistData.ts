@@ -65,7 +65,8 @@ function persistItem(currStore, name, inSessionStorage = false, global = false) 
                     currStore[name] = persistedData;
                 }
             }
-        } catch (error) {
+        } catch (e) {
+            console.log('error:', e);
             currStore[name] = persistedData;
         }
     }

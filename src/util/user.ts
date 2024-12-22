@@ -26,9 +26,9 @@ export const goToLoginWithRedirect = () => {
 export const getUserFromStorage = () => {
     try {
         const user = localStorage.getItem('user') || '';
-        const result = JSON.parse(user);
-        return result;
+        return JSON.parse(user);
     } catch (error) {
+        console.error('Error parsing user from localStorage:', error);
         return null;
     }
 };

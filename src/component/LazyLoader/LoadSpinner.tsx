@@ -82,7 +82,8 @@ export const loadSpinner: any = (spinner = <div className={styles.loader} />, op
 
     return null;
 };
-
-export default () => {
+const LoaderSpinner = () => {
     return <div>{loadSpinner()}</div>;
 };
+
+export default LoaderSpinner;

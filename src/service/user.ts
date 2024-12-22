@@ -13,7 +13,7 @@ const userInfo: UserInfo = {
     userid: '00000002',
     userType: 'user',
 };
-let currentUserInfo: UserInfo | {} = adminInfo;
+let currentUserInfo: UserInfo = adminInfo || {};
 
 const waitTime = (time = 1000) => {
     return new Promise((resolve) => {

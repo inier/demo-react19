@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 // 圖片資源引入
 import BG_1 from './img/bc-1.png';
@@ -7,10 +7,11 @@ import styles from './index.module.scss';
 
 class ErrorBoundary extends Component {
     static getDerivedStateFromError(error) {
+        console.log('ErrorBoundary-getDerivedStateFromError:', error);
         // Update state so the next render will show the fallback UI.
         return { hasError: true };
     }
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         this.state = {
             hasError: false,
@@ -40,6 +41,7 @@ class ErrorBoundary extends Component {
     };
     render() {
         const { hasError, err, info } = this.state;
+        const { children } = this.props;
 
         if (hasError) {
             return (
@@ -73,7 +75,7 @@ class ErrorBoundary extends Component {
             );
         }
 
-        return this.props?.children;
+        return children;
     }
 }
 

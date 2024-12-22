@@ -54,7 +54,8 @@ class ResponseCode {
         const appPath = window.location.pathname.split('/')[1];
         // 本地的版本号
         const oldVer = window.localStorage.getItem(`${appPath}_error_code_v`);
-        return {};
+
+        // return {};
         return request
             .get(apiUrls.GET_RESPONSE_CODE, { version: oldVer || 'undefined' })
             .then((json) => {

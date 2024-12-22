@@ -16,11 +16,12 @@ const responseHandle = (status: number, response: AxiosResponse) => {
         case 401: {
             alert('登录状态已过期，请重新登录！');
             goToLoginWithRedirect();
+
             return;
-            // return Promise.reject(response);
         }
         default: {
             alert(response.data.msg || '服务器响应异常，请联系管理员');
+
             return Promise.reject(response);
         }
     }
@@ -41,7 +42,6 @@ service.interceptors.request.use(
         if (config.loading || config.loading === undefined) {
             rootStore.UIStore.setLoading(true);
         }
-        const { headers, ...otherConfig } = config;
         // 统一处理，增加$_isFormData区分post请求：FormData方式
         if (config.data && config.headers) {
             if (config.data.$_isFormData === true) {

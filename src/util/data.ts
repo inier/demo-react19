@@ -43,10 +43,11 @@ export function createTreeFromTreeLikeArray(array: TreeLikeArray, options?: Tree
     const { idKey = 'id', parentIdKey = 'pId', childrenKey = 'children' } = options || {};
     const idMapTemp = Object.create(null);
     const cloneData: typeof array = cloneDeep(array);
+    const result: TreeLikeArray = [];
+
     cloneData.forEach((row: TreeLikeArrayItem): void => {
         idMapTemp[row[idKey]] = row;
     });
-    const result: TreeLikeArray = [];
     cloneData.forEach((row: TreeLikeArrayItem): void => {
         const parent = idMapTemp[row[parentIdKey]];
         if (parent) {
@@ -56,6 +57,7 @@ export function createTreeFromTreeLikeArray(array: TreeLikeArray, options?: Tree
             result.push(row);
         }
     });
+
     return result;
 }
 
@@ -73,6 +75,7 @@ export function filterTreeArray(
     const { idKey = 'id', parentIdKey = 'pId' } = options || {};
     const result: TreeLikeArray = array.filter(predicate);
     const needCheekPidArr = [...result];
+
     // 查找父级
     while (needCheekPidArr.length) {
         // 从末尾截取一个节点, (从末尾是因为 array 大概率是排序过的数据, 从末尾查找速度快)
@@ -93,6 +96,7 @@ export function filterTreeArray(
             }
         }
     }
+
     return result;
 }
 
@@ -120,6 +124,7 @@ export function closestParentItemInTreeArray(
         }
         return undefined;
     };
+
     do {
         currentItem = findItem();
         if (currentItem) {
@@ -127,6 +132,7 @@ export function closestParentItemInTreeArray(
         }
         deepLoopCount -= 1;
     } while (currentItem && currentItem[parentIdKey] && deepLoopCount > 0);
+
     return result;
 }
 
@@ -157,6 +163,7 @@ export function closestParentKeysInTreeArray(
         }
         return undefined;
     };
+
     do {
         currentItem = findItem();
         if (currentItem) {
@@ -164,6 +171,7 @@ export function closestParentKeysInTreeArray(
         }
         deepLoopCount -= 1;
     } while (currentItem && currentItem[parentIdKey] && deepLoopCount > 0);
+
     return result;
 }
 
@@ -182,6 +190,7 @@ export function findChildrenItemInTreeArray(
     const result: TreeLikeArray = [];
     const findChildren = (pId: keyof any) => array.filter((item: TreeLikeArrayItem) => item[parentIdKey] === pId);
     let queue: TreeLikeArray = findChildren(targetNode[idKey]);
+
     while (queue.length) {
         const currentItem: TreeLikeArrayItem | undefined = queue.shift();
         if (currentItem) {
@@ -190,6 +199,7 @@ export function findChildrenItemInTreeArray(
             queue = queue.concat(children);
         }
     }
+
     return result;
 }
 
@@ -205,11 +215,13 @@ export function hasChildrenNode(
     options?: TreeNodeFieldAlias
 ): boolean {
     const { idKey = 'id', parentIdKey = 'pId' } = options || {};
+
     return array.some((item: TreeLikeArrayItem) => item[parentIdKey] === targetNode[idKey]);
 }
 
 function _normalizeObjectPath(path: string | string[]): string[] {
     if (path instanceof Array) return path;
+
     return path
         .replace(/\[(\d+)\]/g, '.$1')
         .split('.')
@@ -219,6 +231,7 @@ function _normalizeObjectPath(path: string | string[]): string[] {
 function _normalizeTreePath(path: string | string[], pathSeparator: string, childrenKey: string): string[] {
     if (path instanceof Array) return path;
     const fullChildren = new RegExp(childrenKey, 'gi');
+
     return path
         .replace(fullChildren, '')
         .replace(/\[(\d+)]/g, '.$1')
@@ -244,13 +257,14 @@ export function getTreeNodeByPath(tree: TreeNode, path: string, options: TreePat
     const { pathSeparator = '.', fieldName = 'title', childrenKey = 'children' } = options || {};
 
     const pathNodes = _normalizeTreePath(path, pathSeparator, childrenKey);
+
     return pathNodes.reduce((branch, pathPart) => {
         if (!branch) return branch;
         const children = branch[childrenKey] || [];
-
         const childIndex = isFinite(Number(pathPart))
             ? pathPart
             : children.findIndex((node: TreeNode) => node[fieldName] === pathPart);
+
         return children[childIndex];
     }, tree);
 }
@@ -262,6 +276,7 @@ export function getTreeNodeByPath(tree: TreeNode, path: string, options: TreePat
  */
 export function getFromTree(tree: Tree, path: string | string[]): unknown {
     const pathArray = _normalizeObjectPath(path);
+
     return pathArray.reduce((node: TreeNode, pathPart: string | number) => {
         if (!node) return node;
         return node[pathPart];
@@ -286,6 +301,7 @@ export function setToTree(tree: Tree, path: string | string[], value: unknown): 
 
         return (node[pathPart] = isFinite(Number((arr as TreeNode[])[index + 1])) ? [] : {});
     }, cloneDeep(tree));
+
     return tree;
 }
 
@@ -311,11 +327,13 @@ export function flattenTree(tree: Tree, keepChildrenField = false, options?: Tre
             }
         }
     };
+
     if (tree instanceof Array) {
         deep(treeDataClone as TreeNode[]);
     } else if (treeDataClone) {
         deep([treeDataClone]);
     }
+
     return result;
 }
 
@@ -339,6 +357,7 @@ function _traverse(
     const results: Tree = [];
     let didBreak = false;
     let lastResult: boolean | undefined;
+
     while (queue.length) {
         const node = queue.shift();
         if (!node) {
@@ -363,6 +382,7 @@ function _traverse(
             break;
         }
     }
+
     if (every) {
         if (returnBoolean) {
             return !didBreak;
@@ -498,6 +518,7 @@ export function findParentTreeNode(tree: Tree, targetNode: TreeNode, options?: T
             options
         );
     }
+
     return null;
 }
 
@@ -510,11 +531,13 @@ export function findParentTreeNode(tree: Tree, targetNode: TreeNode, options?: T
 export function findIndexInSiblingNode(tree: Tree, targetNode: TreeNode, options?: TreeNodeFieldAlias): number {
     const { idKey = 'id', childrenKey = 'children' } = options || {};
     const parentNode = findParentTreeNode(tree, targetNode, options);
+
     if (parentNode) {
         return parentNode
             ? parentNode[childrenKey].findIndex((node: TreeNode) => node[idKey] === targetNode[idKey])
             : -1;
     }
+
     return 0;
 }
 
@@ -527,10 +550,12 @@ export function findIndexInSiblingNode(tree: Tree, targetNode: TreeNode, options
 export function mapTree(tree: Tree, callbackFn: (node: TreeNode) => TreeNode, options?: TreeNodeFieldAlias): Tree {
     const { childrenKey = 'children' } = options || {};
     const treeClone = tree instanceof Array ? cloneDeep(tree) : [cloneDeep(tree)];
+
     return treeClone.map((item: TreeNode) => {
         if (item[childrenKey]) {
             item[childrenKey] = mapTree(item[childrenKey], callbackFn, options);
         }
+
         return callbackFn(item);
     });
 }
@@ -548,12 +573,15 @@ export function sortTree(
 ): Tree {
     const { childrenKey = 'children' } = options || {};
     let treeClone = tree instanceof Array ? cloneDeep(tree) : [cloneDeep(tree)];
+
     treeClone = treeClone.map((item: TreeNode) => {
         if (item[childrenKey]) {
             item[childrenKey] = sortTree(item[childrenKey], compareFn, options);
         }
+
         return item;
     });
+
     return treeClone.sort(compareFn);
 }
 
@@ -574,8 +602,10 @@ export function replaceTreeNode(
             if (replaceNode instanceof Function) {
                 return replaceNode(node);
             }
+
             return replaceNode;
         }
+
         return node;
     });
 }
@@ -587,12 +617,14 @@ export function replaceTreeNode(
  */
 export function removeEmptyChildrenTreeNode(tree: Tree, options?: TreeNodeFieldAlias): Tree {
     const { childrenKey = 'children' } = options || {};
+
     return mapTree(tree, (node) => {
         if (Array.isArray(node[childrenKey]) && node[childrenKey].length) {
             node[childrenKey] = removeEmptyChildrenTreeNode(node[childrenKey], options);
         } else if (node[childrenKey]) {
             delete node[childrenKey];
         }
+
         return node;
     });
 }
@@ -611,6 +643,7 @@ export function statisticsTreeNodeChildren(
     options?: TreeNodeFieldAlias
 ): Tree {
     const { childrenKey = 'children' } = options || {};
+
     return mapTree(tree, (node) => {
         if (node[childrenKey] && node[childrenKey].length) {
             if (deep) {
@@ -623,6 +656,7 @@ export function statisticsTreeNodeChildren(
                 node[statisticsKey] = node[childrenKey].length;
             }
         }
+
         return node;
     });
 }
@@ -655,6 +689,7 @@ export function closestParentItemInTree(
         if (matchResult && isContainerTarget) {
             result.unshift(node);
         }
+
         return matchResult;
     };
     if (tree instanceof Array) {
@@ -682,6 +717,7 @@ export function filterTree(tree: Tree, predicate: (node: TreeNode) => boolean, o
                 return child;
             }
         }
+
         return predicate(child);
     });
 }
@@ -694,6 +730,7 @@ export function filterTree(tree: Tree, predicate: (node: TreeNode) => boolean, o
 export function completionTreeNodePid(tree: Tree, options?: TreeNodeFieldAlias): Tree {
     const { idKey = 'id', parentIdKey = 'pId', childrenKey = 'children' } = options || {};
     const treeDataClone = cloneDeep(tree) as TreeNode[];
+
     for (let i = 0; i < treeDataClone.length; i += 1) {
         treeDataClone[i][childrenKey] = completionTreeNodePid(
             treeDataClone[i][childrenKey] &&
@@ -704,6 +741,7 @@ export function completionTreeNodePid(tree: Tree, options?: TreeNodeFieldAlias):
                 }))
         );
     }
+
     return treeDataClone;
 }
 
@@ -716,12 +754,14 @@ export function completionTreeNodePid(tree: Tree, options?: TreeNodeFieldAlias):
 export function getRightNode(tree: Tree, targetNode: TreeNode, options?: TreeNodeFieldAlias): TreeNode | null {
     const { idKey = 'id', childrenKey = 'children' } = options || {};
     const parentNode = findParentTreeNode(tree, targetNode, options);
+
     if (parentNode) {
         const targetIndex: number = parentNode
             ? parentNode[childrenKey].findIndex((node: TreeNode) => node[idKey] === targetNode[idKey])
             : -1;
         return parentNode[childrenKey].slice(targetIndex + 1, targetIndex + 2)?.[0];
     }
+
     return null;
 }
 
@@ -734,12 +774,14 @@ export function getRightNode(tree: Tree, targetNode: TreeNode, options?: TreeNod
 export function getAllRightNode(tree: Tree, targetNode: TreeNode, options?: TreeNodeFieldAlias): TreeNode[] {
     const { idKey = 'id', childrenKey = 'children' } = options || {};
     const parentNode = findParentTreeNode(tree, targetNode, options);
+
     if (parentNode) {
         const targetIndex: number = parentNode
             ? parentNode[childrenKey].findIndex((node: TreeNode) => node[idKey] === targetNode[idKey])
             : -1;
         return parentNode[childrenKey].slice(targetIndex + 1);
     }
+
     return [];
 }
 
@@ -752,12 +794,14 @@ export function getAllRightNode(tree: Tree, targetNode: TreeNode, options?: Tree
 export function getLeftNode(tree: Tree, targetNode: TreeNode, options?: TreeNodeFieldAlias): TreeNode | null {
     const { idKey = 'id', childrenKey = 'children' } = options || {};
     const parentNode = findParentTreeNode(tree, targetNode, options);
+
     if (parentNode) {
         const targetIndex = parentNode
             ? parentNode[childrenKey].findIndex((node: TreeNode) => node[idKey] === targetNode[idKey])
             : -1;
         return parentNode[childrenKey].slice(targetIndex - 1, targetIndex - 2)?.[0];
     }
+
     return null;
 }
 
@@ -770,12 +814,14 @@ export function getLeftNode(tree: Tree, targetNode: TreeNode, options?: TreeNode
 export function getAllLeftNode(tree: Tree, targetNode: TreeNode, options?: TreeNodeFieldAlias): TreeNode[] {
     const { idKey = 'id', childrenKey = 'children' } = options || {};
     const parentNode = findParentTreeNode(tree, targetNode, options);
+
     if (parentNode && parentNode[childrenKey] instanceof Array) {
         const targetIndex = parentNode
             ? parentNode[childrenKey].findIndex((node: TreeNode) => node[idKey] === targetNode[idKey])
             : -1;
         return parentNode[childrenKey].slice(0, targetIndex);
     }
+
     return [];
 }
 
@@ -788,6 +834,7 @@ export function getAllLeftNode(tree: Tree, targetNode: TreeNode, options?: TreeN
  */
 export function removeEmptyChildren(tree: Tree = [], options?: TreeNodeFieldAlias): Tree {
     const { childrenKey = 'children' } = options || {};
+
     return Array.isArray(tree)
         ? cloneDeep(tree).map((item) => {
               const result = { ...item };
@@ -825,6 +872,7 @@ export function getTreeDepth(tree: Tree, options?: TreeNodeFieldAlias): number {
     } else {
         fn([tree], 0);
     }
+
     return deep;
 }
 
@@ -839,6 +887,7 @@ export function effectSubNode(
     options?: TreeNodeFieldAlias
 ): Tree {
     const { childrenKey = 'children' } = options || {};
+
     return cloneDeep(tree).map((item: Record<string, any>) => {
         let result = { ...item };
         const children = result[childrenKey];
@@ -853,6 +902,7 @@ export function effectSubNode(
         } else if (Array.isArray(children) && children.length) {
             result[childrenKey] = effectSubNode(children, fieldName, fieldValue, effectObj, options);
         }
+
         return result;
     });
 }
@@ -870,6 +920,7 @@ export function effectParentNode(
     const parentPathArray = closestParentItemInTree(tree, (item) => item[fieldName] === fieldValue, true, options);
     const { idKey = 'id' } = options || {};
     let result = cloneDeep(tree);
+
     parentPathArray.forEach((item) => {
         result = replaceTreeNode(
             result,
@@ -877,6 +928,7 @@ export function effectParentNode(
             (node) => ({ ...node, ...effectObj })
         );
     });
+
     return result;
 }
 
@@ -894,6 +946,7 @@ export function diffFlatArray(newValue = [], oldValue = []) {
         };
     }
     const tNew = difference(newValue, oldValue); // 新增
+
     return {
         adds: tNew,
         dels: difference(oldValue, difference(newValue, tNew)), // 删除
@@ -954,6 +1007,7 @@ export function findDeepByKey(data, { key, value }, seed) {
 export function findLeafForMap(arr = [], seed = 'data') {
     // 选择对象片段
     const tArr = [];
+
     (function tFindData(array) {
         for (let i = 0; i < array.length; i++) {
             const item = array[i];
@@ -964,6 +1018,7 @@ export function findLeafForMap(arr = [], seed = 'data') {
             }
         }
     })(arr);
+
     return tArr;
 }
 
@@ -977,6 +1032,7 @@ export function getValuesForMap(data: string[] = [], key = 'id'): any[] {
     if (isEmpty(data) || data === null) {
         return [];
     }
+
     return data.map((item) => {
         return item[key];
     });
@@ -1000,6 +1056,7 @@ export function assembleData(
     let flag = false;
     // 选择对象片段
     const tArr: any = [];
+
     return (function tAssembleData(array: any) {
         if (array === null) {
             return [];
@@ -1047,7 +1104,9 @@ export function assembleData(
             }, {});
 
             // 对符合条件的树合并options中的props
-            flag && tArr.includes(item[optKey]) && Object.assign(tResult, props);
+            if (flag && tArr.includes(item[optKey])) {
+                Object.assign(tResult, props);
+            }
 
             return tResult;
         });
@@ -1070,6 +1129,7 @@ export function bindKeyForData(data: any[], keysMap: object = { value: 'key' }) 
 
         return data;
     }
+
     return [];
 }
 
@@ -1088,6 +1148,7 @@ export function flatObjectMap(prefix = '', mapKeys: string[] = [], flatObj = {})
     if (tKeys.length === 0) {
         tKeys = mapKeys;
     }
+
     return tKeys.map((key: string) => {
         if (mapKeys.includes(key)) {
             return {
@@ -1104,6 +1165,7 @@ export function flatDataToArr(data = [], seed = 'data') {
         return [];
     }
     const result = [];
+
     (function tFlatData(dataT) {
         dataT.forEach((item) => {
             const tArr = item[seed];
@@ -1113,6 +1175,7 @@ export function flatDataToArr(data = [], seed = 'data') {
             }
         });
     })(data);
+
     return result;
 }
 
@@ -1157,6 +1220,7 @@ export function renameFlatObject(flatObj: any, prefix = '', renameKeys: any = []
         return;
     }
     const tKeys: string[] = Object.keys(flatObj);
+
     return tKeys.map((key) => {
         if (renameKeys.includes(key)) {
             return {
@@ -1205,9 +1269,13 @@ export function getGenes(data: any, id: any, reverse = false) {
  * @param {string} jsonStr 对象字符串
  * @param {string | undefined} errMessage 错误信息
  * @param {function | undefined} errCb 错误提示回调
- * @returns {any} 正常转换返回{}，不符合对象字符串的返回null
+ * @returns {(Record<string, unknown> | null)} 正常转换返回对象，非对象字符串或空字符串返回null
  */
-export function jsonParse(jsonStr: string = '', errMessage: string | undefined = '', errCb?: Function): any {
+export function jsonParse(
+    jsonStr: string = '',
+    errMessage: string | undefined = '',
+    errCb?: (error: Error, message: string) => void
+) {
     if (!jsonStr) {
         return null;
     }
@@ -1228,10 +1296,9 @@ export function jsonParse(jsonStr: string = '', errMessage: string | undefined =
 
             throw Error(errMessage);
         } catch (e) {
-            // console.log(e);
-            errCb && errMessage && errCb(e, errMessage);
-
-            return null;
+            if (errCb && errMessage) {
+                errCb(e, errMessage);
+            }
         }
     }
 
@@ -1248,13 +1315,16 @@ export function simpleEquals(target: any, old: any) {
         return false;
     }
     let isEquals = true;
+
     Object.keys(old).forEach((key) => {
         if (String(old[key] || '') !== String(target[key] || '')) {
             isEquals = false;
             return false;
         }
+
         return true;
     });
+
     return isEquals;
 }
 
@@ -1275,6 +1345,7 @@ export function trimUnderline(params: object) {
  */
 export function trimPrefix(params: object, prefix: string) {
     let result = {};
+
     Object.entries(params).forEach((item) => {
         if (item[0].startsWith(prefix)) {
             result[item[0].replace(prefix, '')] = item[1];
@@ -1282,5 +1353,6 @@ export function trimPrefix(params: object, prefix: string) {
             result[item[0]] = item[1];
         }
     });
+
     return result;
 }

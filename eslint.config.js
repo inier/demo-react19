@@ -1,4 +1,4 @@
-// eslint.config.ts
+// eslint.config.js
 
 // https://eslint.org/docs/rules/
 // https://github.com/facebook/create-react-app/blob/master/packages/eslint-config-react-app/index.js
@@ -6,18 +6,13 @@
 // https://typescript-eslint.nodejs.cn/
 // https://eslint.org/docs/latest/rules/
 import eslint from '@eslint/js';
-
 import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsEslintParser from '@typescript-eslint/parser';
 import tsEslint from 'typescript-eslint';
-
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-
 import babelParser from '@babel/eslint-parser';
-
 import globals from 'globals';
 
 const customTsFlatConfig = [
@@ -31,7 +26,8 @@ const customTsFlatConfig = [
         rules: {
             ...tsEslintPlugin.configs.recommended.rules,
             '@typescript-eslint/no-confusing-non-null-assertion': 2,
-            '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/no-explicit-any': 1,
+            '@typescript-eslint/no-unused-vars': 1,
         },
         plugins: {
             // ts 语法特有的规则，例如泛型

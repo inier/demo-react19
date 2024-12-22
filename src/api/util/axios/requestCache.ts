@@ -64,7 +64,7 @@ const cacheHandler = {
 
 const CACHES = new Proxy(_CACHES, cacheHandler);
 
-export function requestInterceptor(config, axios) {
+export function requestInterceptor(config) {
     // 开启缓存则保存请求结果和cancel 函数
     if (config.cache) {
         const data = CACHES[`${generateReqKey(config)}`];
