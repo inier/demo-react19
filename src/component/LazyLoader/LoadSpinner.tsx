@@ -1,34 +1,31 @@
-import React, { useEffect, useState, PropsWithChildren } from "react";
+import React, { useEffect, useState, PropsWithChildren } from 'react';
 
-import styles from "./LoadSpinner.module.scss";
+import styles from './LoadSpinner.module.scss';
 
 // 过渡loader容器
 export const LoadSpinnerWrapper = ({
-  className = "",
-  style = {},
-  children,
+    className = '',
+    style = {},
+    children,
 }: PropsWithChildren<{ className?: string; style?: React.CSSProperties }>) => {
-  return (
-    <div className={`${styles.wrapper} ${className}`} style={style}>
-      {children}
-    </div>
-  );
+    return (
+        <div className={`${styles.wrapper} ${className}`} style={style}>
+            {children}
+        </div>
+    );
 };
 
 // 延迟fallback
-export const DelayedFallback = ({
-  delay = 300,
-  children,
-}: PropsWithChildren<{ delay?: number }>) => {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    let timeout = setTimeout(() => setShow(true), delay);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [delay]);
+export const DelayedFallback = ({ delay = 300, children }: PropsWithChildren<{ delay?: number }>) => {
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        let timeout = setTimeout(() => setShow(true), delay);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [delay]);
 
-  return <>{show && children}</>;
+    return <>{show && children}</>;
 };
 
 /**
@@ -42,53 +39,51 @@ export const DelayedFallback = ({
  * }
  * @returns {*}
  */
-export const loadSpinner: any = (
-  spinner = <div className={styles.loader} />,
-  options = {}
-) => {
-  const tOptions = Object.assign(
-    {
-      pastDelay: 300,
-      isLoading: true,
-      error: false,
-    },
-    options
-  );
-  const { isLoading, pastDelay, error } = tOptions;
-
-  if (error) {
-    return (
-      <LoadSpinnerWrapper>
-        <div>
-          <span>加载失败，</span>
-          <span
-            className={styles.error}
-            onClick={() => {
-              window.location.reload();
-            }}
-          >
-            点击刷新
-          </span>
-        </div>
-      </LoadSpinnerWrapper>
+export const loadSpinner: any = (spinner = <div className={styles.loader} />, options = {}) => {
+    const tOptions = Object.assign(
+        {
+            pastDelay: 300,
+            isLoading: true,
+            error: false,
+        },
+        options
     );
-  }
+    const { isLoading, pastDelay, error } = tOptions;
 
-  if (isLoading) {
-    if (pastDelay) {
-      return (
-        <LoadSpinnerWrapper>
-          <DelayedFallback delay={pastDelay}>{spinner}</DelayedFallback>
-        </LoadSpinnerWrapper>
-      );
+    if (error) {
+        return (
+            <LoadSpinnerWrapper>
+                <div>
+                    <span>加载失败，</span>
+                    <span
+                        className={styles.error}
+                        onClick={() => {
+                            window.location.reload();
+                        }}
+                    >
+                        点击刷新
+                    </span>
+                </div>
+            </LoadSpinnerWrapper>
+        );
     }
 
-    return <LoadSpinnerWrapper>{spinner}</LoadSpinnerWrapper>;
-  }
+    if (isLoading) {
+        if (pastDelay) {
+            return (
+                <LoadSpinnerWrapper>
+                    <DelayedFallback delay={pastDelay}>{spinner}</DelayedFallback>
+                </LoadSpinnerWrapper>
+            );
+        }
 
-  return null;
+        return <LoadSpinnerWrapper>{spinner}</LoadSpinnerWrapper>;
+    }
+
+    return null;
+};
+const LoaderSpinner = () => {
+    return <div>{loadSpinner()}</div>;
 };
 
-export default () => {
-  return <div>{loadSpinner()}</div>;
-};
+export default LoaderSpinner;

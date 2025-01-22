@@ -2,85 +2,85 @@
 @import '../../styles/variables.scss';
 
 .avatar {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: map.get($border-radius, 'round');
-  overflow: hidden;
-  background: map.get($colors, 'disabled');
-  color: #fff;
-  font-weight: normal;
-  white-space: nowrap;
-  vertical-align: middle;
-  
-  // 尺寸变体
-  &-xs {
-    width: map.get($sizes, 'xs');
-    height: map.get($sizes, 'xs');
-    font-size: 12px;
-  }
-  
-  &-sm {
-    width: map.get($sizes, 'sm');
-    height: map.get($sizes, 'sm');
-    font-size: 14px;
-  }
-  
-  &-md {
-    width: map.get($sizes, 'md');
-    height: map.get($sizes, 'md');
-    font-size: 16px;
-  }
-  
-  &-lg {
-    width: map.get($sizes, 'lg');
-    height: map.get($sizes, 'lg');
-    font-size: 20px;
-  }
-  
-  &-xl {
-    width: map.get($sizes, 'xl');
-    height: map.get($sizes, 'xl');
-    font-size: 24px;
-  }
-
-  // 图片样式
-  &-image {
-    background: transparent;
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  // 文字样式
-  &-text {
-    text-transform: uppercase;
-  }
-
-  // 形状变体
-  &-square {
-    border-radius: map.get($border-radius, 'sm');
-  }
-
-  &-circle {
-    border-radius: map.get($border-radius, 'round');
-  }
-
-  // 组样式（用于多个头像叠加展示）
-  &-group {
+    position: relative;
     display: inline-flex;
-    
-    .avatar {
-      border: 2px solid #fff;
-      margin-inline-end: -8px;
-      
-      &:hover {
-        z-index: 1;
-      }
+    align-items: center;
+    justify-content: center;
+    border-radius: map.get($border-radius, 'round');
+    overflow: hidden;
+    background: map.get($colors, 'disabled');
+    color: #fff;
+    font-weight: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    // 尺寸变体
+    &-xs {
+        width: map.get($sizes, 'xs');
+        height: map.get($sizes, 'xs');
+        font-size: 12px;
     }
-  }
-} 
+
+    &-sm {
+        width: map.get($sizes, 'sm');
+        height: map.get($sizes, 'sm');
+        font-size: 14px;
+    }
+
+    &-md {
+        width: map.get($sizes, 'md');
+        height: map.get($sizes, 'md');
+        font-size: 16px;
+    }
+
+    &-lg {
+        width: map.get($sizes, 'lg');
+        height: map.get($sizes, 'lg');
+        font-size: 20px;
+    }
+
+    &-xl {
+        width: map.get($sizes, 'xl');
+        height: map.get($sizes, 'xl');
+        font-size: 24px;
+    }
+
+    // 图片样式
+    &-image {
+        background: transparent;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    // 文字样式
+    &-text {
+        text-transform: uppercase;
+    }
+
+    // 形状变体
+    &-square {
+        border-radius: map.get($border-radius, 'sm');
+    }
+
+    &-circle {
+        border-radius: map.get($border-radius, 'round');
+    }
+
+    // 组样式（用于多个头像叠加展示）
+    &-group {
+        display: inline-flex;
+
+        .avatar {
+            border: 2px solid #fff;
+            margin-inline-end: -8px;
+
+            &:hover {
+                z-index: 1;
+            }
+        }
+    }
+}

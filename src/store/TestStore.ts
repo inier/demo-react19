@@ -1,13 +1,13 @@
 /**
  * 保存token等信息和其他公共信息
  */
-import { observable, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 class TestStore {
     rootStore: any;
 
     // @observable
-    token = "";
+    token = '';
 
     constructor(rootStore) {
         makeAutoObservable(this, { rootStore: false }, { autoBind: true });

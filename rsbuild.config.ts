@@ -7,8 +7,19 @@ import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 // https://rsbuild.dev/zh/plugins/list/plugin-less
 import { pluginLess } from '@rsbuild/plugin-less';
+// https://github.com/rspack-contrib/rsbuild-plugin-mdx
+// https://mdxjs.com/playground/
+import { pluginMdx } from '@rsbuild/plugin-mdx';
+// https://rsbuild.dev/plugins/list/plugin-svgr
+import { pluginSvgr } from '@rsbuild/plugin-svgr';
+// https://github.com/rspack-contrib/rsbuild-plugin-image-compress
+import { pluginImageCompress } from '@rsbuild/plugin-image-compress';
+// https://github.com/rspack-contrib/rsbuild-plugin-eslint
+import { pluginEslint } from '@rsbuild/plugin-eslint';
 // https://rsbuild.dev/zh/plugins/list/plugin-babel
 import { pluginBabel } from '@rsbuild/plugin-babel';
+// https://github.com/zh-lx/code-inspector
+import { codeInspectorPlugin } from 'code-inspector-plugin';
 // https://www.npmjs.com/package/rspack-plugin-mock
 import { pluginMockServer } from 'rspack-plugin-mock/rsbuild';
 
@@ -19,13 +30,14 @@ import { devProxy } from './proxy.config.ts';
 const PUBLIC_URL = '/app';
 
 // 环境变量兼容
-const { publicVars: publicEnvVars, parsed } = loadEnv({ prefixes: ['REACT_APP_'] });
+const { publicVars: publicEnvVars, parsed } = loadEnv({
+  prefixes: ['REACT_APP_'],
+});
 const extEnvs = Object.keys(parsed).filter((key) => !publicEnvVars[`process.env.${key}`]);
 extEnvs.forEach((env) => {
   publicEnvVars[`process.env.${env}`] = JSON.stringify(parsed[env]);
 });
 console.log('环境变量: ', extEnvs, publicEnvVars);
-
 
 // 打包性能配置
 const performanceConfig = (): object => {
@@ -52,6 +64,9 @@ const performanceConfig = (): object => {
 export default defineConfig({
   dev: {
     lazyCompilation: true,
+    client: {
+      overlay: false,
+    },
   },
   server: {
     port: 3000,
@@ -65,7 +80,10 @@ export default defineConfig({
       text: 'XYZ',
     },
     tags: [
-      { tag: 'script', attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js' } },
+      {
+        tag: 'script',
+        attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js' },
+      },
     ],
   },
   // 环境变量
@@ -76,12 +94,12 @@ export default defineConfig({
     },
     alias: {
       '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
-      '@assets': 'src/assets',
-      '@components': 'src/components',
+      '@/assets': 'src/assets',
+      '@/components': 'src/components',
     },
-    decorators: {
-      version: 'legacy',
-    },
+    // decorators: {
+    //   version: 'legacy',
+    // },
     transformImport: [
       {
         libraryName: '@arco-design/mobile-react',
@@ -90,31 +108,47 @@ export default defineConfig({
       },
     ],
   },
+  output: {
+    filename: {
+      css: process.env.NODE_ENV === 'production' ? '[name].[contenthash:8].css' : '[name].css',
+    },
+  },
   plugins: [
     pluginReact(),
-    // babel
     pluginBabel({
       include: /\.(?:jsx|tsx)$/,
       babelLoaderOptions: (config, { addPlugins }) => {
-        // addPlugins([]);
-        plugins: [
-          // ['@babel/plugin-proposal-decorators', {
-          //   version: 'legacy',
-          // }],
-          // ['@babel/plugin-transform-class-properties'],
-          ['babel-plugin-react-compiler'],
-        ]
+        addPlugins([['@babel/plugin-transform-class-properties'], ['babel-plugin-react-compiler']]);
+      },
+    }),
+    pluginEslint({
+      enable: process.env.NODE_ENV === 'development' ? true : false,
+      eslintPluginOptions: {
+        configType: "flat",
       },
     }),
     pluginSass(),
     pluginLess(),
+    pluginMdx(),
+    pluginSvgr(),
+    pluginImageCompress(['jpeg', 'png']),
     // mock dev server
     pluginMockServer({
-      prefix: '/api-mock/',
-      wsPrefix: '/socket.io',
-      log: "info",
+      prefix: ['/api-dev/'],
+      wsPrefix: ['/socket.io'],
+      log: 'debug',
+      build: true,
       reload: true,
     }),
   ],
-  performance: performanceConfig(), // ## Rsbuild 打包工具
+  tools: {
+    rspack: {
+      plugins: [
+        codeInspectorPlugin({
+          bundler: 'rspack',
+        }),
+      ],
+    },
+  },
+  performance: performanceConfig(),
 });

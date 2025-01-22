@@ -14,42 +14,42 @@ export const getUrlQuery = () => parse(window.location.href.split('?')[1]);
  * @returns {*} url对象，没有返回null
  */
 export function urlParse(url: any): any {
-  /* eslint-disable no-useless-escape */
-  const urlObj = {
-    protocol: /^(.+)\:\/\//,
-    host: /\:\/\/(.+?)[\?\#\s\/]/,
-    path: /\w(\/.*?)[\?\#\s]/,
-    query: /\?(.+?)[\#\/\s]/,
-    hash: /\#(\w+)\s$/,
-  };
+    /* eslint-disable no-useless-escape */
+    const urlObj = {
+        protocol: /^(.+)\:\/\//,
+        host: /\:\/\/(.+?)[\?\#\s\/]/,
+        path: /\w(\/.*?)[\?\#\s]/,
+        query: /\?(.+?)[\#\/\s]/,
+        hash: /\#(\w+)\s$/,
+    };
 
-  function formatQuery(str: string) {
-    return str.split('&').reduce((a, b) => {
-      const arr = b.split('=');
-      a[arr[0]] = arr[1];
-      return a;
-    }, {});
-  }
+    function formatQuery(str: string) {
+        return str.split('&').reduce((a, b) => {
+            const arr = b.split('=');
+            a[arr[0]] = arr[1];
+            return a;
+        }, {});
+    }
 
-  if (!url) {
-    return {};
-  }
+    if (!url) {
+        return {};
+    }
 
-  try {
-    Object.keys(urlObj).forEach(key => {
-      const pattern = urlObj[key];
+    try {
+        Object.keys(urlObj).forEach((key) => {
+            const pattern = urlObj[key];
 
-      if (key === 'query') {
-        urlObj[key] = pattern.exec(url) && formatQuery(pattern.exec(url)[1]);
-      } else {
-        urlObj[key] = pattern.exec(url) && pattern.exec(url)[1];
-      }
-    });
-  } catch (err) {
-    console.log(err);
-  }
+            if (key === 'query') {
+                urlObj[key] = pattern.exec(url) && formatQuery(pattern.exec(url)[1]);
+            } else {
+                urlObj[key] = pattern.exec(url) && pattern.exec(url)[1];
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
 
-  return urlObj;
+    return urlObj;
 }
 
 /**
@@ -58,38 +58,38 @@ export function urlParse(url: any): any {
  * @returns {*} 对应的value，没有返回null
  */
 export function getQueryString(val) {
-  const reg = new RegExp(`(^|&)${val}=([^&]*)(&|$)`);
-  const r = decodeURIComponent(window.location.search.substr(1)).match(reg);
+    const reg = new RegExp(`(^|&)${val}=([^&]*)(&|$)`);
+    const r = decodeURIComponent(window.location.search.substr(1)).match(reg);
 
-  if (r !== null) {
-    return unescape(r[2]);
-  }
+    if (r !== null) {
+        return unescape(r[2]);
+    }
 
-  return null;
+    return null;
 }
 
 export function getHashQueryData() {
-  const { hash } = window.location;
-  const data = {};
-  if (hash.indexOf('?') !== -1) {
-    const queryStr = hash.split('?')[1];
-    queryStr.split('&').forEach(str => {
-      const p = str.split('=');
-      data[p[0]] = p[1];
-    });
-  }
-  return data;
+    const { hash } = window.location;
+    const data = {};
+    if (hash.indexOf('?') !== -1) {
+        const queryStr = hash.split('?')[1];
+        queryStr.split('&').forEach((str) => {
+            const p = str.split('=');
+            data[p[0]] = p[1];
+        });
+    }
+    return data;
 }
 
 export function getQueryString2(val) {
-  const reg = new RegExp(`(^|&)?${val}=([^&]*)(&|$)`);
-  const r = decodeURIComponent(window.location.hash.substr(1)).match(reg);
+    const reg = new RegExp(`(^|&)?${val}=([^&]*)(&|$)`);
+    const r = decodeURIComponent(window.location.hash.substr(1)).match(reg);
 
-  if (r !== null) {
-    return unescape(r[2]);
-  }
+    if (r !== null) {
+        return unescape(r[2]);
+    }
 
-  return null;
+    return null;
 }
 /**
  * @description 拼接url参数
@@ -98,24 +98,24 @@ export function getQueryString2(val) {
  * @returns {String} 拼接后的 url
  */
 export function addQueryParams(src = '', params = {}) {
-  let paramsStr = '';
-  let tSrc = src;
+    let paramsStr = '';
+    let tSrc = src;
 
-  Object.keys(params).forEach(key => {
-    paramsStr += `&${key}=${params[key]}`;
-  });
+    Object.keys(params).forEach((key) => {
+        paramsStr += `&${key}=${params[key]}`;
+    });
 
-  if (paramsStr === '') {
-    return tSrc;
-  } else {
-    if (/\?/g.test(tSrc)) {
-      tSrc += paramsStr;
+    if (paramsStr === '') {
+        return tSrc;
     } else {
-      tSrc += `?${paramsStr.substring(1)}`;
-    }
+        if (/\?/g.test(tSrc)) {
+            tSrc += paramsStr;
+        } else {
+            tSrc += `?${paramsStr.substring(1)}`;
+        }
 
-    return tSrc;
-  }
+        return tSrc;
+    }
 }
 
 /**
@@ -126,21 +126,18 @@ export function addQueryParams(src = '', params = {}) {
  * @returns 返回替换后的URL
  */
 export function replaceQueryParams(url, arg, val) {
-  const pattern = `${arg}=([^&]*)`;
-  const replaceText = `${arg}=${val}`;
-  let currUrl = '';
+    const pattern = `${arg}=([^&]*)`;
+    const replaceText = `${arg}=${val}`;
+    let currUrl = '';
 
-  if (url.match(pattern)) {
-    /* eslint-disable no-eval */
-    const tmp = `/(${arg}=)([^&]*)/gi`;
-    currUrl = url.replace(eval(tmp), replaceText);
-  } else {
-    currUrl = url.includes('?')
-      ? `${url}&${replaceText}`
-      : `${url}?${replaceText}`;
-  }
+    if (url.match(pattern)) {
+        const tmp = `/(${arg}=)([^&]*)/gi`;
+        currUrl = url.replace(eval(tmp), replaceText);
+    } else {
+        currUrl = url.includes('?') ? `${url}&${replaceText}` : `${url}?${replaceText}`;
+    }
 
-  return currUrl;
+    return currUrl;
 }
 
 /**
@@ -150,23 +147,23 @@ export function replaceQueryParams(url, arg, val) {
  * @returns 返回删除参数后的URL
  */
 export function removeQueryParams(url, param) {
-  const urlParts = url.split('?');
-  if (urlParts.length >= 2) {
-    // 参数名前缀
-    const prefix = `${encodeURIComponent(param)}=`;
-    const paras = urlParts[1].split(/[&;]/g);
+    const urlParts = url.split('?');
+    if (urlParts.length >= 2) {
+        // 参数名前缀
+        const prefix = `${encodeURIComponent(param)}=`;
+        const paras = urlParts[1].split(/[&;]/g);
 
-    // 循环查找匹配参数
-    for (let i = paras.length; i > 0; i--) {
-      if (paras[i].lastIndexOf(prefix, 0) !== -1) {
-        // 存在则删除
-        paras.splice(i, 1);
-      }
+        // 循环查找匹配参数
+        for (let i = paras.length; i > 0; i--) {
+            if (paras[i].lastIndexOf(prefix, 0) !== -1) {
+                // 存在则删除
+                paras.splice(i, 1);
+            }
+        }
+
+        return `${urlParts[0]}${paras.length > 0 ? `?${paras.join('&')}` : ''}`;
     }
-
-    return `${urlParts[0]}${paras.length > 0 ? `?${paras.join('&')}` : ''}`;
-  }
-  return url;
+    return url;
 }
 
 /**
@@ -175,29 +172,29 @@ export function removeQueryParams(url, param) {
  * @returns {Object} 转换后的对象
  */
 export function search2obj(search) {
-  const searchT = (search && search.substr(1)) || '';
+    const searchT = (search && search.substr(1)) || '';
 
-  if (!searchT) {
-    return {};
-  }
-
-  const paramsList = searchT.split('&');
-  const params = {};
-
-  paramsList.forEach(i => {
-    if (!i) {
-      return;
+    if (!searchT) {
+        return {};
     }
 
-    const p = i.split('=');
-    if (p.length === 1) {
-      params[p[0]] = '';
-    } else {
-      params[p[0]] = p[1];
-    }
-  });
+    const paramsList = searchT.split('&');
+    const params = {};
 
-  return params;
+    paramsList.forEach((i) => {
+        if (!i) {
+            return;
+        }
+
+        const p = i.split('=');
+        if (p.length === 1) {
+            params[p[0]] = '';
+        } else {
+            params[p[0]] = p[1];
+        }
+    });
+
+    return params;
 }
 
 /**
@@ -205,16 +202,16 @@ export function search2obj(search) {
  * @param {Object} obj like {a:'1',b:'2'}
  * @returns {string}
  */
-export const obj2search = obj => {
-  const search = Object.keys(obj)
-    .map(i => `${i}=${obj[i]}`)
-    .join('&');
+export const obj2search = (obj) => {
+    const search = Object.keys(obj)
+        .map((i) => `${i}=${obj[i]}`)
+        .join('&');
 
-  if (!search) {
-    return '';
-  }
+    if (!search) {
+        return '';
+    }
 
-  return `?${search}`;
+    return `?${search}`;
 };
 
 /**
@@ -222,13 +219,11 @@ export const obj2search = obj => {
  * @param {Object} obj like {a:'1',b:'2'}
  * @returns {string}
  */
-export const getUrlWithSearchObj = obj => {
-  const params = search2obj(window.location.search);
-  Object.assign(params, obj);
+export const getUrlWithSearchObj = (obj) => {
+    const params = search2obj(window.location.search);
+    Object.assign(params, obj);
 
-  return `${window.location.origin}${window.location.pathname}${obj2search(
-    params,
-  )}`;
+    return `${window.location.origin}${window.location.pathname}${obj2search(params)}`;
 };
 
 /**
@@ -237,7 +232,7 @@ export const getUrlWithSearchObj = obj => {
  * @returns {*} 编码后的数据
  */
 export function urlEncodeBase64(val) {
-  return window.btoa(unescape(encodeURIComponent(val)));
+    return window.btoa(unescape(encodeURIComponent(val)));
 }
 
 /**
@@ -246,7 +241,7 @@ export function urlEncodeBase64(val) {
  * @returns {*} 解码后端数目
  */
 export function urlDecodeBase64(val) {
-  return decodeURIComponent(escape(window.atob(val)));
+    return decodeURIComponent(escape(window.atob(val)));
 }
 
 /**
@@ -255,10 +250,10 @@ export function urlDecodeBase64(val) {
  * @returns {boolean}
  */
 export function isAbsolutePath(path = '') {
-  if (path.indexOf('//') >= 0) {
-    return true;
-  }
-  return false;
+    if (path.indexOf('//') >= 0) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -267,12 +262,12 @@ export function isAbsolutePath(path = '') {
  * @returns {string|undefined} 格式化后的path
  */
 export function formatPath(path: string): string | undefined {
-  if (!path) {
-    return '/404';
-  } else if (path.indexOf('//') >= -1) {
-    return path;
-  }
-  return path.indexOf('/') === 0 ? path : `/${path}`;
+    if (!path) {
+        return '/404';
+    } else if (path.indexOf('//') >= -1) {
+        return path;
+    }
+    return path.indexOf('/') === 0 ? path : `/${path}`;
 }
 
 /**
@@ -281,40 +276,39 @@ export function formatPath(path: string): string | undefined {
  * @returns {string|undefined} 格式化后的path
  */
 export function getUrl(path: string): string | undefined {
-  if (!path) {
-    return '/404';
-  }
+    if (!path) {
+        return '/404';
+    }
 
-  if (path.indexOf('://') > -1) {
-    return path;
-  } else {
-    return `${window.location.origin}${formatPath(path)}`;
-  }
+    if (path.indexOf('://') > -1) {
+        return path;
+    } else {
+        return `${window.location.origin}${formatPath(path)}`;
+    }
 }
 
 /**
  * 将Object值中的null转换为undefined
  */
 export const nullTransformationToUndefined = (value: any): any => {
-  const cloneObj = cloneDeep(value);
-  const transformationFunc = (obj: any): void => {
-    if (obj instanceof Object) {
-      const ary = Array.isArray(obj) ? obj : Object.keys(obj);
-      ary.forEach((it, index) => {
-        const key = Array.isArray(obj) ? index : it;
-        if (obj[key] === null) {
-          // eslint-disable-next-line no-param-reassign
-          obj[key] = undefined;
-        } else if (obj[key] instanceof Object) {
-          transformationFunc(obj[key]);
+    const cloneObj = cloneDeep(value);
+    const transformationFunc = (obj: any): void => {
+        if (obj instanceof Object) {
+            const ary = Array.isArray(obj) ? obj : Object.keys(obj);
+            ary.forEach((it, index) => {
+                const key = Array.isArray(obj) ? index : it;
+                if (obj[key] === null) {
+                    obj[key] = undefined;
+                } else if (obj[key] instanceof Object) {
+                    transformationFunc(obj[key]);
+                }
+            });
         }
-      });
-    }
-  };
+    };
 
-  transformationFunc(cloneObj);
+    transformationFunc(cloneObj);
 
-  return cloneObj;
+    return cloneObj;
 };
 
 /**
@@ -323,24 +317,24 @@ export const nullTransformationToUndefined = (value: any): any => {
  * @returns params
  */
 export function filterUsefulRequestParams(params) {
-  const result = {};
-  if (!params) {
-    return null;
-  }
-  Object.keys(params).forEach(key => {
-    const value = params[key];
-    if (value !== '' && value !== undefined && value !== null) {
-      // 是否要判断空数组?  !(value instanceof Array && value.length === 0)
-      result[key] = value;
+    const result = {};
+    if (!params) {
+        return null;
     }
-  });
-  return result;
+    Object.keys(params).forEach((key) => {
+        const value = params[key];
+        if (value !== '' && value !== undefined && value !== null) {
+            // 是否要判断空数组?  !(value instanceof Array && value.length === 0)
+            result[key] = value;
+        }
+    });
+    return result;
 }
 
 export function removeSlash(path) {
-  if (!path) {
-    return path;
-  }
+    if (!path) {
+        return path;
+    }
 
-  return path === '/' ? '/' : path?.replace(/\/$/g, '');
+    return path === '/' ? '/' : path?.replace(/\/$/g, '');
 }

@@ -13,7 +13,10 @@
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    transition: opacity 0.3s, transform 0.5s, top 0.5s;
+    transition:
+        opacity 0.3s,
+        transform 0.5s,
+        top 0.5s;
     display: flex;
     align-items: center;
     justify-content: center;

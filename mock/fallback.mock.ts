@@ -1,8 +1,8 @@
-import { defineMock } from 'rspack-plugin-mock/helper'
+import { defineMock } from 'rspack-plugin-mock/helper';
 
 export default defineMock({
-  url: '/api/(.*)',
-  body: {
-    message: 'This request fallback',
-  },
-})
+    url: '/api/(.*)',
+    body: {
+        message: 'This request fallback',
+    },
+});

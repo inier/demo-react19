@@ -2,10 +2,8 @@
 
 // const isProd = process.env.ENV === 'production';
 
-/* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg =
-  // eslint-disable-next-line max-len
-  /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
+    /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
 /**
  * 判断是否是有效的 URL
@@ -19,7 +17,7 @@ export const getUuid = (length) => Number(`${Math.random().toString().substr(3, 
  * 是否是开发模式
  */
 export const isDev = (): boolean => {
-  return import.meta.env.MODE === 'development';
+    return import.meta.env.MODE === 'development';
 };
 
 // 参数处理
