@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { action, makeAutoObservable, observable } from 'mobx';
 
 import { isMobile } from '@/util';

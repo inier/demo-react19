@@ -1,11 +1,3 @@
-/*
- * @Author: 邱狮杰
- * @Date: 2022-12-12 14:46:27
- * @LastEditTime: 2023-06-02 14:05:38
- * @Description:
- * @FilePath: /gitlabEC_admin_fe/src/stores/UserStore.ts
- */
-/* eslint-disable no-param-reassign */
 /**
  * 保存用户信息与登录信息token等其他公共信息
  */

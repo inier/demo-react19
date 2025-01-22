@@ -1,5 +1,3 @@
-/* eslint-disable import/order */
-/* eslint-disable no-console */
 import { createContext } from 'react';
 
 import { request, responseCode } from '@/api';
