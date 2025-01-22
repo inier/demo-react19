@@ -1,7 +1,12 @@
 import { inject, observer } from 'mobx-react';
 import { Avatar } from '@/component';
+import UserStore from '@/store/UserStore';
 
-function FuncComponent(props) {
+interface InjectedProps {
+    userStore: UserStore;
+}
+
+function FuncComponent(props: InjectedProps) {
     const { userStore } = props;
     const { avatar, name } = userStore.userInfo;
 

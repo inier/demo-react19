@@ -31,124 +31,124 @@ const PUBLIC_URL = '/app';
 
 // 环境变量兼容
 const { publicVars: publicEnvVars, parsed } = loadEnv({
-  prefixes: ['REACT_APP_'],
+    prefixes: ['REACT_APP_'],
 });
 const extEnvs = Object.keys(parsed).filter((key) => !publicEnvVars[`process.env.${key}`]);
 extEnvs.forEach((env) => {
-  publicEnvVars[`process.env.${env}`] = JSON.stringify(parsed[env]);
+    publicEnvVars[`process.env.${env}`] = JSON.stringify(parsed[env]);
 });
 console.log('环境变量: ', extEnvs, publicEnvVars);
 
 // 打包性能配置
 const performanceConfig = (): object => {
-  const config = {
-    // https://rsbuild.dev/zh/config/performance/remove-console
-    removeConsole: ['log', 'warn'],
-  };
+    const config = {
+        // https://rsbuild.dev/zh/config/performance/remove-console
+        removeConsole: ['log', 'warn'],
+    };
 
-  // https://rsbuild.dev/zh/config/performance/bundle-analyze
-  const isBundleAnalyze = process.env.BUNDLE_ANALYZE === 'true';
-  if (isBundleAnalyze) {
-    Object.assign(config, {
-      bundleAnalyze: {
-        analyzerMode: 'static', // 'server'
-        openAnalyzer: true,
-      },
-    });
-    console.log('BUNDLE_ANALYZE: ', isBundleAnalyze);
-  }
+    // https://rsbuild.dev/zh/config/performance/bundle-analyze
+    const isBundleAnalyze = process.env.BUNDLE_ANALYZE === 'true';
+    if (isBundleAnalyze) {
+        Object.assign(config, {
+            bundleAnalyze: {
+                analyzerMode: 'static', // 'server'
+                openAnalyzer: true,
+            },
+        });
+        console.log('BUNDLE_ANALYZE: ', isBundleAnalyze);
+    }
 
-  return config;
+    return config;
 };
 
 export default defineConfig({
-  dev: {
-    lazyCompilation: true,
-    client: {
-      overlay: false,
+    dev: {
+        lazyCompilation: true,
+        client: {
+            overlay: false,
+        },
     },
-  },
-  server: {
-    port: 3000,
-    // 开发环境代理配置
-    proxy: devProxy,
-  },
-  html: {
-    template: './public/index.html',
-    templateParameters: {
-      iconfontUrl: process.env.REACT_APP_ICONFONT_URL,
-      text: 'XYZ',
+    server: {
+        port: 3000,
+        // 开发环境代理配置
+        proxy: devProxy,
     },
-    tags: [
-      {
-        tag: 'script',
-        attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js' },
-      },
-    ],
-  },
-  // 环境变量
-  source: {
-    define: {
-      'process.env.PUBLIC_URL': JSON.stringify(PUBLIC_URL),
-      ...publicEnvVars,
+    html: {
+        template: './public/index.html',
+        templateParameters: {
+            iconfontUrl: process.env.REACT_APP_ICONFONT_URL,
+            text: 'XYZ',
+        },
+        tags: [
+            {
+                tag: 'script',
+                attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js' },
+            },
+        ],
     },
-    alias: {
-      '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
-      '@/assets': 'src/assets',
-      '@/components': 'src/components',
+    // 环境变量
+    source: {
+        define: {
+            'process.env.PUBLIC_URL': JSON.stringify(PUBLIC_URL),
+            ...publicEnvVars,
+        },
+        alias: {
+            '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
+            '@/assets': 'src/assets',
+            '@/components': 'src/components',
+        },
+        // decorators: {
+        //   version: 'legacy',
+        // },
+        transformImport: [
+            {
+                libraryName: '@arco-design/mobile-react',
+                libraryDirectory: 'esm',
+                style: true,
+            },
+        ],
     },
-    // decorators: {
-    //   version: 'legacy',
-    // },
-    transformImport: [
-      {
-        libraryName: '@arco-design/mobile-react',
-        libraryDirectory: 'esm',
-        style: true,
-      },
-    ],
-  },
-  output: {
-    filename: {
-      css: process.env.NODE_ENV === 'production' ? '[name].[contenthash:8].css' : '[name].css',
+    output: {
+        filename: {
+            css: process.env.NODE_ENV === 'production' ? '[name].[contenthash:8].css' : '[name].css',
+        },
     },
-  },
-  plugins: [
-    pluginReact(),
-    pluginBabel({
-      include: /\.(?:jsx|tsx)$/,
-      babelLoaderOptions: (config, { addPlugins }) => {
-        addPlugins([['@babel/plugin-transform-class-properties'], ['babel-plugin-react-compiler']]);
-      },
-    }),
-    pluginEslint({
-      enable: process.env.NODE_ENV === 'development' ? true : false,
-      eslintPluginOptions: {
-        configType: "flat",
-      },
-    }),
-    pluginSass(),
-    pluginLess(),
-    pluginMdx(),
-    pluginSvgr(),
-    pluginImageCompress(['jpeg', 'png']),
-    // mock dev server
-    pluginMockServer({
-      prefix: ['/api-dev/'],
-      wsPrefix: ['/socket.io'],
-      log: 'debug',
-      build: true,
-      reload: true,
-    }),
-  ],
-  tools: {
-    rspack: {
-      plugins: [
-        codeInspectorPlugin({
-          bundler: 'rspack',
+    plugins: [
+        pluginReact(),
+        pluginBabel({
+            include: /\.(?:jsx|tsx)$/,
+            babelLoaderOptions: (config, { addPlugins }) => {
+                addPlugins([['@babel/plugin-transform-class-properties'], ['babel-plugin-react-compiler']]);
+            },
         }),
-      ],
+        pluginEslint({
+            enable: process.env.NODE_ENV === 'development' ? true : false,
+            eslintPluginOptions: {
+                configType: 'flat',
+            },
+        }),
+        pluginSass(),
+        pluginLess(),
+        pluginMdx(),
+        pluginSvgr(),
+        pluginImageCompress(['jpeg', 'png']),
+        // mock dev server
+        pluginMockServer({
+            prefix: ['/api-dev/'],
+            wsPrefix: ['/socket.io'],
+            log: 'debug',
+            build: true,
+            reload: true,
+        }),
+    ],
+    tools: {
+        rspack: {
+            plugins: [
+                codeInspectorPlugin({
+                    bundler: 'rspack',
+                }),
+            ],
+        },
     },
-  },
-  performance: performanceConfig(),
+    performance: performanceConfig(),
 });

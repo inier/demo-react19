@@ -22,7 +22,7 @@ const customTsFlatConfig = [
             parser: tsEslintParser,
             sourceType: 'module',
         },
-        files: ['**/*.{ts,tsx}'],
+        files: ['src/**/*.{ts,tsx}'],
         rules: {
             ...tsEslintPlugin.configs.recommended.rules,
             '@typescript-eslint/no-confusing-non-null-assertion': 2,
@@ -59,7 +59,7 @@ const flatConfig = [
     },
     {
         name: 'react-eslint',
-        files: ['**/*.{js,jsx,ts,tsx}'],
+        files: ['src/**/*.{js,jsx,ts,tsx}'],
         plugins: {
             'react': reactPlugin,
             'react-hooks': reactHooksPlugin,
@@ -75,6 +75,8 @@ const flatConfig = [
         rules: {
             ...reactPlugin.configs.recommended.rules,
             'react/react-in-jsx-scope': 0,
+            'react/prop-types': 1,
+            'react/display-name': 1,
         },
         settings: {
             react: {

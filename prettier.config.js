@@ -17,7 +17,5 @@ export default {
     semi: true,
     quoteProps: 'consistent',
     jsxSingleQuote: false,
-    bracketSpacing: true,
     bracketSameLine: false,
-    jsxBracketSameLine: false,
 };

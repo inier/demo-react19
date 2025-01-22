@@ -2,9 +2,9 @@ import { useCallback } from 'react';
 import { useRequest } from '@/hooks';
 import userService from '../services/demo';
 
-export function DemoUseRequest1({ id }) {
+export function DemoUseRequest1({ id }: any) {
     // 用法1：传入字符串
-    const { data, request } = useRequest('/api/user');
+    const { data = {}, request } = useRequest('/api/user', {}, { manual: true });
     const handleClick1 = useCallback(() => {
         // 触发数据请求
         request();
@@ -25,12 +25,13 @@ export function DemoUseRequest1({ id }) {
 
 export function DemoUseRequest2({ id, options = {} }) {
     // 用法2：传入配置对象
-    const { data, request } = useRequest(
+    const { data = {}, request } = useRequest(
         {
             url: '/api/user',
             method: 'get',
         },
-        options
+        options,
+        { manual: true }
     );
     const handleClick = useCallback(() => {
         // 触发数据请求
@@ -52,9 +53,7 @@ export function DemoUseRequest2({ id, options = {} }) {
 
 export function DemoUseRequest3({ id, options = {} }) {
     // 用法3：传入 service 函数
-    const { data, request } = useRequest(userService.getResList, {
-        ...options,
-    });
+    const { data = {}, request } = useRequest(userService.getResList, options, { manual: true });
     const handleClick = useCallback(() => {
         // 触发数据请求
         request();

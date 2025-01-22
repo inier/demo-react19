@@ -44,7 +44,9 @@ class RootStore {
             return Promise.reject(Error('service的参数应该是一个promise.'));
         }
         // 是否挂上公共参数
-        !opts.noCommonData && Object.assign(_params, this.commonRequestData);
+        if (!opts.noCommonData) {
+            Object.assign(_params, this.commonRequestData);
+        }
 
         return service.call(this, _params, opts);
     };
@@ -62,7 +64,9 @@ class RootStore {
      */
     sendGet = (url = '', _params = {}, opts = { noCommonData: false, loading: false, toast: false }) => {
         // 是否挂上公共参数
-        !opts.noCommonData && Object.assign(_params, this.commonRequestData);
+        if (!opts.noCommonData) {
+            Object.assign(_params, this.commonRequestData);
+        }
 
         return request.get(url, _params, opts);
     };
@@ -80,7 +84,9 @@ class RootStore {
      */
     sendPost = (url = '', _params = {}, opts = { noCommonData: false, loading: false, toast: false }) => {
         // 是否挂上公共参数
-        !opts.noCommonData && Object.assign(_params, this.commonRequestData);
+        if (!opts.noCommonData) {
+            Object.assign(_params, this.commonRequestData);
+        }
 
         return request.post(url, _params, opts);
     };
@@ -111,6 +117,7 @@ class RootStore {
     handleRequestError = (code: string | undefined, message?) => {
         const codeMsg = responseCode.codeMsg(code);
         let msg = codeMsg || message;
+
         if (codeMsg && message) {
             msg = `${codeMsg}: ${message}`;
         }
@@ -149,7 +156,10 @@ class RootStore {
             json.data = json;
         }
         if (!json || typeof json.code === 'undefined' || json.code === null) {
-            !toast && this.handleRequestError(json.code, json.message || '数据返回错误！');
+            if (!toast) {
+                this.handleRequestError(json.code, json.message || '数据返回错误！');
+            }
+
             return {};
         }
 
@@ -166,7 +176,10 @@ class RootStore {
             // 显示错误信息
             default: {
                 console.log(`Request is get Error,Code :${json.code}`);
-                !toast && this.handleRequestError(json.code, json.message);
+                if (!toast) {
+                    this.handleRequestError(json.code, json.message);
+                }
+
                 return json;
             }
         }

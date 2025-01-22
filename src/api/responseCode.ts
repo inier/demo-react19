@@ -25,7 +25,9 @@ class ResponseCode {
                 console.log('ResponseCode:constructor', error);
             }
 
-            apiUrls.GET_RESPONSE_CODE && this.getNewCode();
+            if (apiUrls.GET_RESPONSE_CODE) {
+                this.getNewCode();
+            }
         }
     }
 
