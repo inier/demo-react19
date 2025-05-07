@@ -1,4 +1,8 @@
 import { createContext } from 'react';
+import { configure, reaction, action } from 'mobx';
+
+// 启用MobX严格模式
+configure({ enforceActions: 'always' });
 
 import { request, responseCode } from '@/api';
 import { goToLoginWithRedirect } from '@/util';
@@ -15,17 +19,75 @@ import TestStore from './TestStore';
 // ...
 
 class RootStore {
-    commonRequestData: any;
+    commonRequestData: unknown;
     UIStore: UIStore;
     userStore: UserStore;
     testStore: TestStore;
 
+    // 惰性初始化stores
+    private _initializedStores: Map<string, boolean> = new Map();
+
     constructor() {
-        this.UIStore = new UIStore(this);
-        this.userStore = new UserStore(this);
-        // 实例化其他Store
-        this.testStore = new TestStore(this);
-        // ...
+        // 初始化核心stores
+        this.UIStore = this._initStore(() => new UIStore(this));
+        this.userStore = this._initStore(() => new UserStore(this));
+
+        // 延迟初始化其他stores
+        this.testStore = this._initStore(() => new TestStore(this));
+    }
+
+    // 惰性初始化store的辅助方法
+    private _initStore<T extends { destroy?(): void }>(factory: () => T): T {
+        const symbol = Object.getOwnPropertySymbols(this).find((s) => (this as any)[s] === factory);
+        const key = symbol ? Symbol.keyFor(symbol) : '';
+
+        if (key && this._initializedStores.get(key)) {
+            throw new Error(`Store ${key} already initialized`);
+        }
+
+        const store = factory();
+        if (key) {
+            this._initializedStores.set(key, true);
+
+            // 设置自动清理
+            if (store.destroy) {
+                reaction(
+                    () => this._initializedStores.get(key),
+                    (initialized) => {
+                        if (!initialized) {
+                            store.destroy!();
+                        }
+                    }
+                );
+            }
+        }
+
+        return store;
+    }
+
+    /**
+     * 清理指定的store
+     * @param storeName 要清理的store名称
+     */
+    @action
+    cleanupStore(storeName: string): void {
+        if (
+            this[storeName as keyof this] &&
+            Object.prototype.hasOwnProperty.call(this[storeName as keyof this], 'destroy')
+        ) {
+            (this[storeName as keyof this] as { destroy?(): void }).destroy?.();
+        }
+        this._initializedStores.delete(storeName);
+    }
+
+    /**
+     * 清理所有stores
+     */
+    @action
+    cleanupAllStores(): void {
+        for (const storeName of Array.from(this._initializedStores.keys())) {
+            this.cleanupStore(storeName);
+        }
     }
 
     /**

@@ -97,3 +97,34 @@ export function responseInterceptor(response) {
 function getNowTime() {
     return new Date().getTime();
 }
+
+export class RequestCache {
+    private cacheMap = new Map();
+
+    has(url: string, params: object): boolean {
+        const key = this.generateKey(url, params);
+        return this.cacheMap.has(key);
+    }
+
+    get<T>(url: string, params: object): T | undefined {
+        const key = this.generateKey(url, params);
+        return this.cacheMap.get(key);
+    }
+
+    set<T>(url: string, params: object, value: T, ttl: number = 60000): void {
+        const key = this.generateKey(url, params);
+        this.cacheMap.set(key, value);
+        setTimeout(() => {
+            this.cacheMap.delete(key);
+        }, ttl);
+    }
+
+    private generateKey(url: string, params: object): string {
+        return `${url}?${Object.entries(params)
+            .map(([k, v]) => `${k}=${encodeURIComponent(JSON.stringify(v))}`)
+            .join('&')}`;
+    }
+}
+
+// 使用示例：导出一个实例
+export const requestCache = new RequestCache();

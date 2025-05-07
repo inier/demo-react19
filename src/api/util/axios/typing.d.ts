@@ -19,8 +19,10 @@ declare module 'axios' {
         cancelRequest?: true; // 是否开启取消重复请求功能
         retry?: number; // 请求重试次数
         retryDelay?: number; // 两次重试之间的时间间隔
-        cache?: true; // 是否开启当前接口缓存
+        cache?: boolean; // 是否开启当前接口缓存
         setExpireTime?: number; // 当前接口缓存时限
+        cacheTTL?: number; // 缓存生存时间（毫秒）
+        showError?: boolean; // 是否显示错误提示
     }
 
     // 泛型接口

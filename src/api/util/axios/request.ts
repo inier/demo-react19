@@ -7,76 +7,172 @@ import stores from '@/store';
 import { goToLoginWithRedirect } from '@/util';
 
 import instance from './interceptor';
+import { RequestCache } from './requestCache'; // 导入RequestCache类
+
+// 创建requestCache实例
+const requestCache = new RequestCache();
+
 /**
  * 核心函数，可通过它处理一切请求数据，并做横向扩展
  * @param {string} url 请求地址
  * @param {object} params 请求参数
  * @param {object} options 请求配置，针对当前本次请求
- * @param {string} method 请求配置，针对当前本次请求
+ * @param {string} method 请求方法，针对当前本次请求
+ * @returns {Promise<T>} 返回类型化的Promise
  */
-function request<T>(url: string, params: object, options: IOptions, method: Method, isReject?: boolean): Promise<T> {
+async function request<T>(
+    url: string,
+    params: object,
+    options: IOptions,
+    method: Method,
+    isReject?: boolean
+): Promise<T> {
     const defaultOptions: IOptions = {
         loading: true,
         mock: false,
         error: true,
+        cache: false, // 默认不启用缓存
+        cacheTTL: 60000, // 默认缓存生存时间（毫秒）
+        retry: 0, // 默认不重试
         ...options,
     };
-    const defaultParams = { ...params };
 
-    // url = `http://10.10.123.3:8000${url}`
-
-    // 是否挂上公共参数
-    if (!defaultOptions.noCommonData) {
-        Object.assign(defaultParams, stores.commonRequestData);
-    }
-
-    // 请求前loading
-    if (defaultOptions.loading) {
-        // console.log(`${url}, loading...`);
-        stores.UIStore.setLoading(true);
-    }
-
-    return new Promise((resolve, reject) => {
-        let data = {};
-
-        // get请求：使用params字段
-        if (method === 'get' || method === 'delete') {
-            data = { params: defaultParams };
-        }
-        // post请求：使用data字段
-        if (method === 'post') {
-            data = { data: defaultParams };
+    try {
+        // 检查缓存
+        if (defaultOptions.cache && requestCache.has(url, params)) {
+            const cachedData = requestCache.get<T>(url, params);
+            if (cachedData !== undefined) {
+                return cachedData;
+            }
         }
 
-        instance({ url, method, ...defaultOptions, ...data })
-            .then((res: any) => {
-                const result = stores.handleResponse(res, {
+        const defaultParams = { ...params };
+
+        // 是否挂上公共参数
+        if (!defaultOptions.noCommonData) {
+            Object.assign(defaultParams, stores.commonRequestData);
+        }
+
+        // 显示加载状态
+        if (defaultOptions.loading) {
+            stores.UIStore.setLoading(true);
+        }
+
+        let response: CustomSuccessData<T> | undefined;
+
+        // 发起请求并处理重试逻辑
+        for (let attempt = 0; attempt <= (defaultOptions.retry ?? 0); attempt++) {
+            try {
+                response = await instance.request({
                     url,
-                    params: defaultParams,
-                    opts: defaultOptions,
+                    method,
+                    [method === 'get' || method === 'delete' ? 'params' : 'data']: defaultParams,
                 });
-                if (result.code === '900002') {
-                    reject('登录已过期,请重新登录');
-                    goToLoginWithRedirect();
-                } else {
-                    resolve(result);
+
+                break; // 如果请求成功，跳出重试循环
+            } catch (error) {
+                if (attempt === (defaultOptions.retry ?? 0)) {
+                    throw error; // 如果达到最大重试次数仍失败，抛出错误
                 }
-            })
-            .catch((error) => {
-                if (isReject === true) {
-                    reject({ code: '900000', message: '操作失败' });
-                } else {
-                    console.log('request status > 400:', error);
+
+                // 等待一段时间后重试（指数退避算法）
+                await new Promise((resolve) => setTimeout(resolve, Math.min(1000 * Math.pow(2, attempt), 5000)));
+            }
+        }
+
+        // 隐藏加载状态
+        if (defaultOptions.loading) {
+            stores.UIStore.setLoading(false);
+        }
+
+        if (!response) {
+            throw new Error('Request failed: no response received');
+        }
+
+        // 使用handleResponse处理响应数据
+        const handledResponse = stores.handleResponse(response.data, {
+            url,
+            params: defaultParams,
+            opts: defaultOptions,
+        });
+
+        // 检查处理后的响应是否存在
+        if (!handledResponse) {
+            throw new Error('Request failed: empty response after handling');
+        }
+
+        // 处理特定的错误代码
+        if (typeof handledResponse === 'object' && handledResponse !== null && 'code' in handledResponse) {
+            const resultData = handledResponse as { code: string; data?: T; msg?: string; message?: string };
+
+            if (resultData.code === '900002') {
+                const errorMessage = resultData.msg || resultData.message || '登录已过期,请重新登录';
+                // 登录已过期
+                if (defaultOptions.error) {
+                    stores.UIStore.showToast(errorMessage);
                 }
-            })
-            .finally(() => {
-                // 请求完关闭loading
-                if (defaultOptions.loading) {
-                    // console.log(`${url}, loaded`);
-                    stores.UIStore.setLoading(false);
+                goToLoginWithRedirect();
+                // 可以选择抛出特定错误或返回特定数据
+                return Promise.reject(new Error(errorMessage));
+            }
+            if (resultData.code === '900000') {
+                // 服务异常处理
+                const errorMessage = resultData.msg || resultData.message || '请求失败';
+                if (defaultOptions.error) {
+                    stores.UIStore.showToast(errorMessage);
                 }
-            });
-    });
+
+                // 可以选择抛出特定错误或返回特定数据
+                return Promise.reject(new Error(errorMessage));
+            }
+        }
+
+        // 如果有data属性，使用data作为返回值，否则使用整个响应
+        const result = 'data' in handledResponse ? handledResponse.data : handledResponse;
+        if (result === undefined || result === null) {
+            throw new Error('Request failed: empty response data');
+        }
+
+        return result as T;
+    } catch (error: unknown) {
+        // 隐藏加载状态
+        if (defaultOptions.loading) {
+            stores.UIStore.setLoading(false);
+        }
+
+        // 处理网络错误
+        if (error instanceof Error && !('response' in error)) {
+            if (defaultOptions.error) {
+                stores.UIStore.showToast('网络连接异常，请检查您的网络');
+            }
+            throw new Error('Network error');
+        }
+
+        if (isReject === true) {
+            Promise.reject({ code: '900000', message: '操作失败' });
+        } else {
+            console.warn('request status > 400:', error);
+        }
+
+        // 处理身份验证错误
+        if (
+            typeof error === 'object' &&
+            error !== null &&
+            'response' in error &&
+            typeof (error as any).response === 'object' &&
+            (error as any).response?.status === 401
+        ) {
+            goToLoginWithRedirect();
+            return Promise.reject(new Error('Unauthorized'));
+        }
+
+        // 处理服务器错误
+        if (defaultOptions.error && error instanceof Error) {
+            stores.UIStore.showToast(`请求失败：${error.message}`);
+        }
+
+        return Promise.reject(error);
+    }
 }
 
 // 封装GET请求

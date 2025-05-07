@@ -18,6 +18,12 @@ class TestStore {
 
         console.log('UI____:', this.token);
     }
+
+    // 添加destroy方法实现
+    destroy() {
+        // 可以添加清理逻辑，或者留空实现接口要求
+        console.log('TestStore destroyed');
+    }
 }
 
 export default TestStore;
