@@ -14,6 +14,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import babelParser from '@babel/eslint-parser';
 import globals from 'globals';
+import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 
 const customTsFlatConfig = [
     {
@@ -55,6 +56,16 @@ const flatConfig = [
             'no-redeclare': 0,
             'no-undef': 0,
             'no-unused-vars': 1,
+        },
+    },
+    {
+        name: 'react-refresh-eslint',
+        files: ['src/**/*.{js,jsx,ts,tsx}'],
+        plugins: {
+            'react-refresh': reactRefreshPlugin,
+        },
+        rules: {
+            'react-refresh/only-export-components': 'warn',
         },
     },
     {

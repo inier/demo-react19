@@ -40,20 +40,21 @@ extEnvs.forEach((env) => {
 console.log('环境变量: ', extEnvs, publicEnvVars);
 
 // 打包性能配置
+const REMOVE_CONSOLE_TYPES = ['log', 'warn'];
+const BUNDLE_ANALYZE_CONFIG = {
+    analyzerMode: 'static',
+    openAnalyzer: true,
+};
+
 const performanceConfig = (): object => {
     const config = {
-        // https://rsbuild.dev/zh/config/performance/remove-console
-        removeConsole: ['log', 'warn'],
+        removeConsole: REMOVE_CONSOLE_TYPES,
     };
 
-    // https://rsbuild.dev/zh/config/performance/bundle-analyze
     const isBundleAnalyze = process.env.BUNDLE_ANALYZE === 'true';
     if (isBundleAnalyze) {
         Object.assign(config, {
-            bundleAnalyze: {
-                analyzerMode: 'static', // 'server'
-                openAnalyzer: true,
-            },
+            bundleAnalyze: BUNDLE_ANALYZE_CONFIG,
         });
         console.log('BUNDLE_ANALYZE: ', isBundleAnalyze);
     }

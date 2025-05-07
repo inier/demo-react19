@@ -20,6 +20,57 @@ const requestCache = new RequestCache();
  * @param {string} method 请求方法，针对当前本次请求
  * @returns {Promise<T>} 返回类型化的Promise
  */
+// 提取隐藏加载状态的逻辑
+function hideLoadingIfNeeded(defaultOptions: IOptions) {
+    if (defaultOptions.loading) {
+        stores.UIStore.setLoading(false);
+    }
+}
+
+// 提取处理网络错误的逻辑
+function handleNetworkError(error: unknown, defaultOptions: IOptions) {
+    if (error instanceof Error && !('response' in error)) {
+        if (defaultOptions.error) {
+            stores.UIStore.showToast('网络连接异常，请检查您的网络');
+        }
+        throw new Error('Network error');
+    }
+}
+
+// 检查缓存
+function checkCache<T>(defaultOptions: IOptions, requestCache: RequestCache, url: string, params: object): T | undefined {
+    if (defaultOptions.cache && requestCache.has(url, params)) {
+        return requestCache.get<T>(url, params);
+    }
+    return undefined;
+}
+
+// 处理重试逻辑
+async function handleRequestWithRetry<T>(defaultOptions: IOptions, instance: any, url: string, method: Method, defaultParams: object): Promise<CustomSuccessData<T> | undefined> {
+    let response: CustomSuccessData<T> | undefined;
+
+    for (let attempt = 0; attempt <= (defaultOptions.retry ?? 0); attempt++) {
+        try {
+            response = await instance.request({
+                url,
+                method,
+                [method === 'get' || method === 'delete' ? 'params' : 'data']: defaultParams,
+            });
+
+            break; // 如果请求成功，跳出重试循环
+        } catch (error) {
+            if (attempt === (defaultOptions.retry ?? 0)) {
+                throw error; // 如果达到最大重试次数仍失败，抛出错误
+            }
+
+            // 等待一段时间后重试（指数退避算法）
+            await new Promise((resolve) => setTimeout(resolve, Math.min(1000 * Math.pow(2, attempt), 5000)));
+        }
+    }
+
+    return response;
+}
+
 async function request<T>(
     url: string,
     params: object,
@@ -39,11 +90,9 @@ async function request<T>(
 
     try {
         // 检查缓存
-        if (defaultOptions.cache && requestCache.has(url, params)) {
-            const cachedData = requestCache.get<T>(url, params);
-            if (cachedData !== undefined) {
-                return cachedData;
-            }
+        const cachedData = checkCache<T>(defaultOptions, requestCache, url, params);
+        if (cachedData !== undefined) {
+            return cachedData;
         }
 
         const defaultParams = { ...params };
@@ -58,32 +107,11 @@ async function request<T>(
             stores.UIStore.setLoading(true);
         }
 
-        let response: CustomSuccessData<T> | undefined;
-
-        // 发起请求并处理重试逻辑
-        for (let attempt = 0; attempt <= (defaultOptions.retry ?? 0); attempt++) {
-            try {
-                response = await instance.request({
-                    url,
-                    method,
-                    [method === 'get' || method === 'delete' ? 'params' : 'data']: defaultParams,
-                });
-
-                break; // 如果请求成功，跳出重试循环
-            } catch (error) {
-                if (attempt === (defaultOptions.retry ?? 0)) {
-                    throw error; // 如果达到最大重试次数仍失败，抛出错误
-                }
-
-                // 等待一段时间后重试（指数退避算法）
-                await new Promise((resolve) => setTimeout(resolve, Math.min(1000 * Math.pow(2, attempt), 5000)));
-            }
-        }
+        // 处理重试逻辑
+        const response = await handleRequestWithRetry<T>(defaultOptions, instance, url, method, defaultParams);
 
         // 隐藏加载状态
-        if (defaultOptions.loading) {
-            stores.UIStore.setLoading(false);
-        }
+        hideLoadingIfNeeded(defaultOptions);
 
         if (!response) {
             throw new Error('Request failed: no response received');
@@ -136,20 +164,14 @@ async function request<T>(
         return result as T;
     } catch (error: unknown) {
         // 隐藏加载状态
-        if (defaultOptions.loading) {
-            stores.UIStore.setLoading(false);
-        }
+        hideLoadingIfNeeded(defaultOptions);
 
         // 处理网络错误
-        if (error instanceof Error && !('response' in error)) {
-            if (defaultOptions.error) {
-                stores.UIStore.showToast('网络连接异常，请检查您的网络');
-            }
-            throw new Error('Network error');
-        }
+        handleNetworkError(error, defaultOptions);
 
         if (isReject === true) {
-            Promise.reject({ code: '900000', message: '操作失败' });
+            // 修正 Promise.reject 的返回问题
+            return Promise.reject({ code: '900000', message: '操作失败' });
         } else {
             console.warn('request status > 400:', error);
         }

@@ -5,6 +5,5 @@
 
 // const { commitlint } = require('@ice/spec');
 
-commitlint = { extends: ['@commitlint/config-conventional'] };
-
-module.exports = commitlint;
+// 修正为对象字面量定义
+module.exports = { extends: ['@commitlint/config-conventional'] };

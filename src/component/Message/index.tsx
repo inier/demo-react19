@@ -20,6 +20,11 @@ interface Props {
      * 提示高度
      */
     top: number;
+
+    /**
+     * 提示显示时长
+     */
+    duration: number;
 }
 
 let timer1: NodeJS.Timeout;
@@ -27,7 +32,7 @@ let timer1: NodeJS.Timeout;
 let timer2: NodeJS.Timeout;
 
 function Message(props: Props) {
-    const { msg, style, className } = props;
+    const { msg, style, className, duration } = props;
     const _type = props.type || 'info';
     const [is_show, setIsShow] = useState(false); // 是否显示
     useEffect(() => {
@@ -37,7 +42,7 @@ function Message(props: Props) {
         }, 10);
         timer2 = setTimeout(() => {
             setIsShow(false);
-        }, 2500);
+        }, duration);
         return () => {
             clearTimeout(timer1);
             clearTimeout(timer2);
@@ -55,20 +60,39 @@ function Message(props: Props) {
 
 let count = 0; // 消息框显示数量
 let _count = 0; // 当前消息框显示数量
-export default function message(message: string, type: 'info' | 'waring' | 'error' | 'success' = 'info') {
+export default function message(
+    message: string,
+    type: 'info' | 'waring' | 'error' | 'success' = 'info',
+    duration = 3000
+) {
     let timer: NodeJS.Timeout;
     const top = 42 + 58 * count;
     const el = document.createElement('div');
     document.body.appendChild(el);
     const root = ReactDOM.createRoot(el);
-    root.render(<Message msg={message} top={top} type={type} />);
+    root.render(<Message msg={message} top={top} type={type} duration={duration} />);
     count++;
     _count++;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    timer = setTimeout(() => {
-        _count--;
+
+    // 定义一个函数用于清除消息框
+    const clearMessage = () => {
+        // 减少当前显示的消息框数量
+        if (_count > 0) {
+            _count--;
+        }
         // 如果当前没有消息框显示，则重置消息框数量
-        if (_count === 0) count = 0;
+        if (_count === 0) {
+            count = 0;
+        }
         document.body.removeChild(el);
-    }, 3500); // 3.5s后自动关闭，设置时间要比在Message组件的timeout时间多一点
+        clearTimeout(timer);
+    };
+
+    // duration后自动关闭，设置时间要比在Message组件的timeout时间多一点
+    timer = setTimeout(clearMessage, duration + 500);
+
+    // 返回一个清除函数供外部调用，同时清除自动关闭的定时器
+    return {
+        clear: clearMessage,
+    };
 }
