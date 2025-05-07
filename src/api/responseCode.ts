@@ -81,4 +81,6 @@ class ResponseCode {
     }
 }
 
-export default new ResponseCode();
+const ins = new ResponseCode();
+
+export default ins;

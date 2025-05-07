@@ -38,7 +38,12 @@ function handleNetworkError(error: unknown, defaultOptions: IOptions) {
 }
 
 // 检查缓存
-function checkCache<T>(defaultOptions: IOptions, requestCache: RequestCache, url: string, params: object): T | undefined {
+function checkCache<T>(
+    defaultOptions: IOptions,
+    requestCache: RequestCache,
+    url: string,
+    params: object
+): T | undefined {
     if (defaultOptions.cache && requestCache.has(url, params)) {
         return requestCache.get<T>(url, params);
     }
@@ -46,7 +51,13 @@ function checkCache<T>(defaultOptions: IOptions, requestCache: RequestCache, url
 }
 
 // 处理重试逻辑
-async function handleRequestWithRetry<T>(defaultOptions: IOptions, instance: any, url: string, method: Method, defaultParams: object): Promise<CustomSuccessData<T> | undefined> {
+async function handleRequestWithRetry<T>(
+    defaultOptions: IOptions,
+    instance: any,
+    url: string,
+    method: Method,
+    defaultParams: object
+): Promise<CustomSuccessData<T> | undefined> {
     let response: CustomSuccessData<T> | undefined;
 
     for (let attempt = 0; attempt <= (defaultOptions.retry ?? 0); attempt++) {
@@ -118,7 +129,7 @@ async function request<T>(
         }
 
         // 使用handleResponse处理响应数据
-        const handledResponse = stores.handleResponse(response.data, {
+        const handledResponse = stores.handleResponse(response, {
             url,
             params: defaultParams,
             opts: defaultOptions,
@@ -249,7 +260,7 @@ export interface IDoRequest {
     ): Promise<CustomSuccessData<T>>;
 }
 
-export default {
+const requestFn = {
     instance,
     get,
     post,
@@ -260,3 +271,5 @@ export default {
     doPostQuery,
     queryKeys,
 };
+
+export default requestFn;

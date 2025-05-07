@@ -134,13 +134,13 @@ export default defineConfig({
         pluginSvgr(),
         pluginImageCompress(['jpeg', 'png']),
         // mock dev server
-        pluginMockServer({
-            prefix: ['/api-dev/'],
-            wsPrefix: ['/socket.io'],
-            log: 'debug',
-            build: true,
-            reload: true,
-        }),
+        // pluginMockServer({
+        //     prefix: ['/api-dev/'],
+        //     wsPrefix: ['/socket.io'],
+        //     log: 'debug',
+        //     build: true,
+        //     reload: true,
+        // }),
     ],
     tools: {
         rspack: {
