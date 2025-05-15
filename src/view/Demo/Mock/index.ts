@@ -1,4 +1,4 @@
-import { get, post } from './mock-request';
+import { get, post } from './mock-fetch';
 
 async function fileExtension() {
     await get('/api/json');

@@ -12,7 +12,7 @@ class ResponseCode {
         10003: '无可用门户，请联系管理员',
         10004: '登录密码错误',
     };
-    newCodes: any;
+    newCodes = {};
 
     constructor() {
         if (apiUrls.GET_RESPONSE_CODE) {
@@ -25,9 +25,7 @@ class ResponseCode {
                 console.log('ResponseCode:constructor', error);
             }
 
-            if (apiUrls.GET_RESPONSE_CODE) {
-                this.getNewCode();
-            }
+            // this.getNewCode();
         }
     }
 
@@ -59,7 +57,7 @@ class ResponseCode {
 
         // return {};
         return request
-            .get(apiUrls.GET_RESPONSE_CODE, { version: oldVer || 'undefined' })
+            .Get(apiUrls.GET_RESPONSE_CODE, { version: oldVer })
             .then((json) => {
                 if (json && Number(json.result) === 0 && json.data) {
                     window.localStorage.setItem(`${appPath}_error_code_v`, json.version);

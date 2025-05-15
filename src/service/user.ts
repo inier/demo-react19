@@ -1,5 +1,5 @@
 import { apiUrls, request } from '@/api';
-import type { UserInfo } from './typing';
+import type { UserInfo, LoginParams, LoginResult } from './typing';
 
 const adminInfo: UserInfo = {
     name: 'Admin',
@@ -13,7 +13,6 @@ const userInfo: UserInfo = {
     userid: '00000002',
     userType: 'user',
 };
-let currentUserInfo: UserInfo = adminInfo || {};
 
 const waitTime = (time = 1000) => {
     return new Promise((resolve) => {
@@ -25,11 +24,12 @@ const waitTime = (time = 1000) => {
 
 /**
  * 短信登录接口
- * @returns {promise}
+ * @param params 登录参数（包含用户名、密码等）
+ * @returns {Promise<LoginResult | undefined>} 登录结果
  */
-export async function login(params) {
+export async function login(params: LoginParams): Promise<LoginResult | undefined> {
     return request
-        .post(apiUrls.LOGIN_BY_SMS_CODE, {
+        .Post(apiUrls.LOGIN_BY_SMS_CODE, {
             noToken: true,
             ...params,
         })
@@ -40,17 +40,28 @@ export async function login(params) {
         });
 }
 
-export async function fetchUserInfo() {
-    const res = await request.get(apiUrls.GET_USER_INFO);
+/**
+ * 获取用户信息
+ * @returns {Promise<UserInfo | { error: true }>} 用户信息或错误标识
+ */
+export async function fetchUserInfo(): Promise<UserInfo | { error: true }> {
+    const res = await request.Get(apiUrls.GET_USER_INFO); // 修正为小写 get
     if (res.code === '0') {
         return res.data;
     }
     if (res.code === '900002') {
         return { error: true };
     }
+    throw new Error(`未知错误码：${res.code}`);
 }
 
-export async function logOut() {
-    const res = { code: '0', message: 'logout success' };
-    return res;
+/**
+ * 退出登录
+ * @param token 当前用户 token
+ * @returns {Promise<{ code: string; message: string; data: any }>} 退出结果
+ */
+export async function logOut(token: string): Promise<{ code: string; message: string; data: any }> {
+    await waitTime(1000);
+    const result = await request.Post(apiUrls.LOGOUT, { token }); // 修正为小写 post 并补充 await
+    return { code: '0', message: 'logout success', data: result };
 }

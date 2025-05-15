@@ -1,6 +1,7 @@
 import { Tab } from '@/component';
 import { DemoUseRequest1, DemoUseRequest2, DemoUseRequest3 } from './DemoUseRequest';
 import DemoRequest from './DemoRequest';
+import DemoAlova from './DemoAlova'; // 新增导入
 
 function Request() {
     const tabs = [
@@ -68,6 +69,11 @@ function Request() {
                     />
                 </div>
             ),
+        },
+        {
+            title: 'DemoAlova', // 新增Tab标题
+            key: 'demo-alova', // 唯一key值
+            content: <DemoAlova />, // 渲染新组件
         },
     ];
 

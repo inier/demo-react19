@@ -206,7 +206,7 @@ class RootStore {
      * @param {*} options 操作
      * @returns 获取的数据
      */
-    handleResponse = (json: any, options: any) => {
+    handleResponse = (json: object, options: any) => {
         const { url, params, opts } = options;
         const { toast } = opts;
 

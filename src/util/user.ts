@@ -37,7 +37,7 @@ export const getUserFromStorage = () => {
  * 设置用户信息到LocalStorage
  * @param user
  */
-export const setUserToStorage = (user: any) => {
+export const setUserToStorage = (user: string) => {
     localStorage.setItem('user', JSON.stringify(user));
 };
 

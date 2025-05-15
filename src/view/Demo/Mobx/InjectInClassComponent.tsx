@@ -19,8 +19,6 @@ interface IProps {
     userStore: UserStore | undefined;
 }
 
-@inject('userStore')
-@observer
 class ClassComponent extends Component<IProps, IStates> {
     render() {
         const { userStore } = this.props;
@@ -38,4 +36,6 @@ class ClassComponent extends Component<IProps, IStates> {
     }
 }
 
-export default ClassComponent;
+const InjectInClassComponent = inject('userStore')(observer(ClassComponent));
+
+export default InjectInClassComponent;

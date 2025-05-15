@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRequest } from '@/hooks';
 import userService from '../services/demo';
 
-export function DemoUseRequest1({ id }: any) {
+export function DemoUseRequest1({ id }) {
     // 用法1：传入字符串
     const { data = {}, request } = useRequest('/api/user', {}, { manual: true });
     const handleClick1 = useCallback(() => {

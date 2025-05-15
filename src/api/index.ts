@@ -1,5 +1,7 @@
 import apiUrls from '@/api/apiUrls';
 import responseCode from '@/api/responseCode';
-import request from '@/api/util/axios/request';
+import requestX from '@/api/util/axios/request';
+import { alovaInstance } from './alova';
 
-export { apiUrls, request, responseCode };
+// 导出alova实例，原request方法由alova的useRequest替代
+export { apiUrls, responseCode, alovaInstance as request, requestX };

@@ -22,5 +22,6 @@ function DemoRequest(props: any) {
         </div>
     );
 }
+const Demo = inject('userStore')(observer(DemoRequest));
 
-export default inject('userStore')(observer(DemoRequest));
+export default Demo;

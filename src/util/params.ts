@@ -11,9 +11,9 @@ export const getUrlQuery = () => parse(window.location.href.split('?')[1]);
 /**
  * @description 通过url得到url对象
  * @param {String} url url
- * @returns {*} url对象，没有返回null
+ * @returns {object} url对象，没有返回null
  */
-export function urlParse(url: any): any {
+export function urlParse(url) {
     /* eslint-disable no-useless-escape */
     const urlObj = {
         protocol: /^(.+)\:\/\//,
@@ -23,7 +23,7 @@ export function urlParse(url: any): any {
         hash: /\#(\w+)\s$/,
     };
 
-    function formatQuery(str: string) {
+    function formatQuery(str) {
         return str.split('&').reduce((a, b) => {
             const arr = b.split('=');
             a[arr[0]] = arr[1];
@@ -261,7 +261,7 @@ export function isAbsolutePath(path = '') {
  * @param {string} path path
  * @returns {string|undefined} 格式化后的path
  */
-export function formatPath(path: string): string | undefined {
+export function formatPath(path) {
     if (!path) {
         return '/404';
     } else if (path.indexOf('//') >= -1) {
@@ -275,7 +275,7 @@ export function formatPath(path: string): string | undefined {
  * @param {string} path path
  * @returns {string|undefined} 格式化后的path
  */
-export function getUrl(path: string): string | undefined {
+export function getUrl(path) {
     if (!path) {
         return '/404';
     }
@@ -290,9 +290,9 @@ export function getUrl(path: string): string | undefined {
 /**
  * 将Object值中的null转换为undefined
  */
-export const nullTransformationToUndefined = (value: any): any => {
+export const nullTransformationToUndefined = (value) => {
     const cloneObj = cloneDeep(value);
-    const transformationFunc = (obj: any): void => {
+    const transformationFunc = (obj: object): void => {
         if (obj instanceof Object) {
             const ary = Array.isArray(obj) ? obj : Object.keys(obj);
             ary.forEach((it, index) => {

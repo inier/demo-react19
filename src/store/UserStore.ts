@@ -3,12 +3,12 @@
  */
 import { makeAutoObservable } from 'mobx';
 
-// import avatar from '@/assets/img/avatar.png';
+import avatar from '@/assets/svgs/react_logo.svg?react';
 import { login, logOut as loginOutService } from '@/service/user';
 import { getQueryString } from '@/util';
 
 class UserStore {
-    rootStore: any;
+    rootStore = null;
 
     // 全局token
     token = '';

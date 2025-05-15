@@ -17,6 +17,7 @@ const urls = {
     GET_PIC_CODE: ipTest + '/main/auth/picCode', //获取图片验证码
     RELOAGIN: ipTest + '/main/user/relogin', //刷新登录
     GET_USER_INFO: ipTest + '/member/user/info', //用户信息
+    LOGOUT: ipTest + '/main/user/logout', //刷新登录
 };
 
 for (let key in urls) {

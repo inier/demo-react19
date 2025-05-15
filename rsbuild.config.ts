@@ -99,7 +99,7 @@ export default defineConfig({
             '@/components': 'src/components',
         },
         // decorators: {
-        //   version: 'legacy',
+        //     version: 'legacy',
         // },
         transformImport: [
             {
@@ -119,7 +119,11 @@ export default defineConfig({
         pluginBabel({
             include: /\.(?:jsx|tsx)$/,
             babelLoaderOptions: (config, { addPlugins }) => {
-                addPlugins([['@babel/plugin-transform-class-properties'], ['babel-plugin-react-compiler']]);
+                addPlugins([
+                    ['@babel/plugin-transform-class-properties'],
+                    ['babel-plugin-react-compiler'],
+                    ['@babel/plugin-transform-class-static-block'],
+                ]);
             },
         }),
         pluginEslint({
