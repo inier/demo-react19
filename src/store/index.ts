@@ -19,7 +19,7 @@ import TestStore from './TestStore';
 // ...
 
 class RootStore {
-    commonRequestData: unknown;
+    commonRequestData = {};
     UIStore: UIStore;
     userStore: UserStore;
     testStore: TestStore;
@@ -91,66 +91,72 @@ class RootStore {
     }
 
     /**
-     * @description 发送GET请求
+     * @description 发送请求
      * @param {string} service 请求service
-     * @param {object} _params 参数
-     * @param {object} opts 其他操作参数，如 {
-     *          noCommonData:false, //不挂在公共参数
-     *          loading:false,  //不展示loading图标
-     *          toast:false,  //不展示接口错误信息
+     * @param {object} params 参数
+     * @param {object} config 其他操作参数,如 {
+     *          noCommonData:false, // 不挂在公共参数
+     *          loading:false,      // 不展示loading图标
+     *          toast:false,        // 不展示接口错误信息
+     *          ...config,          // alovaInstance.Get配置参数
      *      }
      * @returns Promise
      */
-    request = async (service, _params = {}, opts = { noCommonData: false, loading: false, toast: false }) => {
+    request = async (service, params = {}, config = { noCommonData: false, loading: false, toast: false }) => {
         if (!service) {
             return Promise.reject(Error('service的参数应该是一个promise.'));
         }
         // 是否挂上公共参数
-        if (!opts.noCommonData) {
-            Object.assign(_params, this.commonRequestData);
+        if (!config.noCommonData) {
+            Object.assign(params, this.commonRequestData);
         }
+        const { noCommonData, loading, toast, ...restConfig } = config;
 
-        return service.call(this, _params, opts);
+        return service.call(this, params, { ...restConfig, meta: { loading, toast } });
     };
 
     /**
      * @description 发送GET请求
      * @param {string} url 请求地址
-     * @param {object} _params 参数
-     * @param {object} opts 其他操作参数 如 {
-     *          noCommonData:false, //不挂在公共参数
-     *          loading:false,  //不展示loading图标
-     *          toast:false,  //不展示接口错误信息
+     * @param {object} params 参数
+     * @param {object} config 其他操作参数,如 {
+     *          noCommonData:false, // 不挂在公共参数
+     *          loading:false,      // 不展示loading图标
+     *          toast:false,        // 不展示接口错误信息
+     *          ...config,          // alovaInstance.Get配置参数
      *      }
      * @returns Promise
      */
-    sendGet = (url = '', _params = {}, opts = { noCommonData: false, loading: false, toast: false }) => {
+    sendGet = (url = '', params = {}, config = { noCommonData: false, loading: false, toast: false }) => {
         // 是否挂上公共参数
-        if (!opts.noCommonData) {
-            Object.assign(_params, this.commonRequestData);
+        if (!config.noCommonData) {
+            Object.assign(params, this.commonRequestData);
         }
+        const { noCommonData, loading, toast, ...restConfig } = config;
 
-        return request.get(url, _params, opts);
+        return request.get(url, { params, ...restConfig, meta: { loading, toast } });
     };
 
     /**
      * @description 发送POST请求
      * @param {string} url 请求地址
-     * @param {object} _params 参数
-     * @param {object} opts 其他操作参数 如 {
-     *          noCommonData:false, //不挂在公共参数
-     *          loading:false,  //不展示loading图标
-     *          toast:false,  //不展示接口错误信息
+     * @param {object} params 参数
+     * @param {object} config 其他操作参数,如 {
+     *          noCommonData:false, // 不挂在公共参数
+     *          loading:false,      // 不展示loading图标
+     *          toast:false,        // 不展示接口错误信息
+     *          ...config,          // alovaInstance.Get配置参数
      *      }
      * @returns Promise
      */
-    sendPost = (url = '', _params = {}, opts = { noCommonData: false, loading: false, toast: false }) => {
+    sendPost = (url = '', params = {}, config = { noCommonData: false, loading: false, toast: false }) => {
         // 是否挂上公共参数
-        if (!opts.noCommonData) {
-            Object.assign(_params, this.commonRequestData);
+        if (!config.noCommonData) {
+            Object.assign(params, this.commonRequestData);
         }
+        const { noCommonData, loading, toast, ...restConfig } = config;
 
-        return request.post(url, _params, opts);
+        return request.post(url, params, { ...restConfig, meta: { loading, toast } });
     };
 
     /**
@@ -194,7 +200,7 @@ class RootStore {
      * @param {object} opts 其他操作参数
      * @param {String} type 请求类型
      */
-    handleRequestExpire = (url, params, opts, type?) => {
+    handleRequestExpire = (url = '', params = {}, opts = {}, type?) => {
         goToLoginWithRedirect();
     };
 
@@ -206,23 +212,21 @@ class RootStore {
      * @param {*} options 操作
      * @returns 获取的数据
      */
-    handleResponse = (json: object, options: any) => {
-        const { url, params, opts } = options;
+    handleResponse = (json, options) => {
+        const { url, params, opts, msg } = options;
         const { toast } = opts;
 
-        if (json && !json.code && json.result) {
-            json.code = json.result;
-        }
-        if (json && !json.code) {
-            json.code = 0;
-            json.data = json;
-        }
         if (!json || typeof json.code === 'undefined' || json.code === null) {
             if (!toast) {
                 this.handleRequestError(json.code, json.message || '数据返回错误！');
             }
 
             return {};
+        }
+
+        if (json && (json?.code || json?.result)) {
+            json.code = json.result || json.code;
+            json.data = json;
         }
 
         switch (String(json.code)) {
@@ -233,7 +237,10 @@ class RootStore {
             // token过期
             case '-1': {
                 console.log('token过期');
-                return this.handleRequestExpire(url, params, opts);
+                this.handleRequestExpire(url, params, opts);
+                this.UIStore.showToast(msg || '登录已过期，请重新登录');
+
+                return json;
             }
             // 显示错误信息
             default: {

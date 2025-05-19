@@ -55,10 +55,9 @@ class ResponseCode {
         // 本地的版本号
         const oldVer = window.localStorage.getItem(`${appPath}_error_code_v`);
 
-        // return {};
         return request
-            .Get(apiUrls.GET_RESPONSE_CODE, { version: oldVer })
-            .then((json) => {
+            .Get(apiUrls.GET_RESPONSE_CODE, { params: { version: oldVer } })
+            .then((json: any) => {
                 if (json && Number(json.result) === 0 && json.data) {
                     window.localStorage.setItem(`${appPath}_error_code_v`, json.version);
                     try {

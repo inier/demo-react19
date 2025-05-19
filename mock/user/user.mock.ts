@@ -1,4 +1,3 @@
-import { apiUrls } from '@/api';
 // https://www.npmjs.com/package/rspack-plugin-mock
 import { defineMock } from 'rspack-plugin-mock/helper';
 import Mock from 'mockjs';
@@ -12,7 +11,7 @@ export default defineMock([
         },
     },
     {
-        url: '/api/' + apiUrls.GET_RES_LIST,
+        url: `/api/res/list`,
         body: {
             result: 0,
             data: { avatar: 'xxx', name: 'yyy' },

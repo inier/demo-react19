@@ -83,7 +83,7 @@ export default defineConfig({
         tags: [
             {
                 tag: 'script',
-                attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js' },
+                attrs: { src: 'https://unpkg.com/react-scan/dist/auto.global.js', async: true, defer: true },
             },
         ],
     },
@@ -115,6 +115,13 @@ export default defineConfig({
         },
     },
     plugins: [
+        // mock dev server
+        pluginMockServer({
+            prefix: ['/api-dev/'],
+            wsPrefix: ['/socket.io'],
+            log: 'debug',
+            reload: true,
+        }),
         pluginReact(),
         pluginBabel({
             include: /\.(?:jsx|tsx)$/,
@@ -137,14 +144,6 @@ export default defineConfig({
         pluginMdx(),
         pluginSvgr(),
         pluginImageCompress(['jpeg', 'png']),
-        // mock dev server
-        // pluginMockServer({
-        //     prefix: ['/api-dev/'],
-        //     wsPrefix: ['/socket.io'],
-        //     log: 'debug',
-        //     build: true,
-        //     reload: true,
-        // }),
     ],
     tools: {
         rspack: {
